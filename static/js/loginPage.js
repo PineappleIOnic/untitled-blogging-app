@@ -26,7 +26,7 @@ $( "form" ).on( "submit", async function( event ) {
                 })
                 let jsonResponse = await response.json()
                 if(jsonResponse.AUTH_CORRECT == true) {
-                    $('#alerts').html(` <div class="alert alert-success" role="alert"> Logged In! </div>`)
+                    location.href = '/account';
                 } else if (jsonResponse.AUTH_CORRECT == false) {
                     if (jsonResponse.CAPTCHAREQUEST == 0) {
                         $('#alerts').html(` <div class="alert alert-danger" role="alert">Username or Password Incorrect </div>`)   

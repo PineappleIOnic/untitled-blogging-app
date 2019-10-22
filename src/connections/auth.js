@@ -3,6 +3,8 @@ const db = require(__dirname + '/DB.js').db;
 const logger = require(__dirname + '/logger.js');
 const argon2 = require('argon2');
 
+var users = null
+
 let argon2Hash = async function(password) {
     try {
         return await argon2.hash(password, {type: argon2.argon2id});
@@ -14,24 +16,46 @@ let argon2Hash = async function(password) {
     }
 }
 
-let getUserdata = async function(username) {
-    return db.oneOrNone('SELECT * FROM users.user_data WHERE username = $1', username)
-    .then((user) => {
-        if (user) {
-            delete user["password"] // We remove the password since no getUserdata() should ever be used to gain the password hash.
-            return user
-        } else {
-            return {ERR:"NO_USER_EXIST"}
-        }
+function sleep(ms){
+    return new Promise(resolve=>{
+        setTimeout(resolve,ms)
     })
+}
+
+let userdataLoop = async function() {
+    while (true) {
+        users = await db.any('SELECT * FROM users.user_data')
+        await(sleep(1000))
+    }
+}
+
+userdataLoop()
+
+var getAllUsers = function() {
+    return users
+}
+
+let getUserdata = async function(username) {
+    let wantedData
+    users.forEach(element => {
+        if (element['username'] == username) {
+            delete element["password"] // We remove the password since no getUserdata() should ever be used to gain the password hash.
+            wantedData = element
+        }
+    });
+    if (wantedData) {
+       return wantedData
+    } else {
+        return {ERR:"NO_USER_EXIST"}
+    }
 }
 
 let pushUser = function(username, password) {
     // Test if DB has already got an user with this username.
-        return db.oneOrNone('SELECT * FROM users.user_data WHERE username = $1', username)
+        getUserdata(username)
         .then((user) => {
-            if (user) {
-                return ('USR_EXIST')
+            if (user['ERR']) {
+                return (user['ERR'])
             } else {
                 return db.none('INSERT INTO users.user_data(username, password, date_created) VALUES($1, $2, $3)', 
                 [username, password, new Date()]).then(() => {
@@ -77,4 +101,4 @@ var authenticateUser = function(username, password) {
 
 }
 
-module.exports = {authenticateUser, createUser, getUserdata};
+module.exports = {authenticateUser, createUser, getUserdata, getAllUsers};

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html style="height: auto;" lang="en"><head>
+<html style="height: auto;" lang="en">
+
+<head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -7,16 +9,20 @@
   <title>IOnic's Blog | Admin Panel </title>
 
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/58f640bc7f.js" crossorigin="anonymous"></script><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css" media="all"><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-font-face.min.css" media="all"><link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-shims.min.css" media="all">
+  <script src="https://kit.fontawesome.com/58f640bc7f.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css" media="all">
+  <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-font-face.min.css"
+    media="all">
+  <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-shims.min.css" media="all">
   <!-- Captcha Things -->
   <script>
-      var CAPTCHASITE = '<%= SITEKEY %>'
+    var CAPTCHASITE = '<%= SITEKEY %>'
   </script>
   <script src="https://www.google.com/recaptcha/api.js?render=<%= SITEKEY %>"></script>
   <script>
-      grecaptcha.ready(function() {
-          grecaptcha.execute('<%= SITEKEY %>', {action: 'control_panel'});
-      });
+    grecaptcha.ready(function () {
+      grecaptcha.execute('<%= SITEKEY %>', { action: 'control_panel' });
+    });
   </script>
   <!-- IonIcons -->
   <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
@@ -26,156 +32,165 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
 <body class="sidebar-mini" style="height: auto;">
-<div class="wrapper">
-  <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars" aria-hidden="true"></i></a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="/" class="nav-link">Home</a>
-      </li>
-    </ul>
+  <div class="wrapper">
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+      <!-- Left navbar links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars" aria-hidden="true"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="/" class="nav-link">Home</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </nav>
 
-    
-    
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+      <!-- Brand Logo -->
+      <a href="index3.html" class="brand-link" style="text-align: center;">
 
-    <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-    </ul>
-  </nav>
-  <!-- /.navbar -->
+        <span class="brand-text font-weight-light">IOnic's Blog Admin</span>
+      </a>
 
-  <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link" style="text-align: center;">
-      
-      <span class="brand-text font-weight-light" style="">IOnic's Blog Admin</span>
-    </a>
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <!-- Sidebar user panel (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        
-        <div class="image">
-          <img class="img-circle elevation-2" alt="User Image" src="/cdn/img/default.png">
-        </div><div class="info">
-          <a href="#" class="d-block">Welcome, <%= username %></a>
-        </div>
-      </div>
-
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li>
-            <ul class="nav nav-treeview" style="display: block;">
-              <li class="nav-item" id="Dashboard">
-                <a href="#" class="nav-link active" id="DashboardButton" onclick="switchpage(`Dashboard`)">
-                  <i class="fas fa-tachometer-alt nav-icon" aria-hidden="true"></i>
-                  <p>Dashboard</p>
-                </a>
-              </li>
-              <li class="nav-item" id="Users">
-                <a href="#" class="nav-link" id="UsersButton" onclick="switchpage(`Users`)">
-                  <i class="fas fa-users nav-icon" aria-hidden="true"></i>
-                  <p>Users</p>
-                </a>
-              </li>
-              <li class="nav-item" id="Blog">
-                <a href="#" class="nav-link" id="BlogButton" onclick="switchpage(`Blog`)">
-                  <i class="fas fa-book nav-icon" aria-hidden="true"></i>
-                  <p>Blog</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </aside>
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper" style="min-height: 305px;">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Dashboard</h1>
+          <div class="image">
+            <img class="img-circle elevation-2" alt="User Image" src="/cdn/img/default.png">
           </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="/">Home</a></li>
-              <li class="breadcrumb-item active">Control Panel</li>
-            </ol>
+          <div class="info">
+            <a href="#" class="d-block">Welcome, <%= username %></a>
+          </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li>
+              <ul class="nav nav-treeview" style="display: block;">
+                <li class="nav-item" id="Dashboard">
+                  <a href="#" class="nav-link active" id="DashboardButton" onclick="switchpage(`Dashboard`)">
+                    <i class="fas fa-tachometer-alt nav-icon" aria-hidden="true"></i>
+                    <p>Dashboard</p>
+                  </a>
+                </li>
+                <li class="nav-item" id="Users">
+                  <a href="#" class="nav-link" id="UsersButton" onclick="switchpage(`Users`)">
+                    <i class="fas fa-users nav-icon" aria-hidden="true"></i>
+                    <p>Users</p>
+                  </a>
+                </li>
+                <li class="nav-item" id="Blog">
+                  <a href="#" class="nav-link" id="BlogButton" onclick="switchpage(`Blog`)">
+                    <i class="fas fa-book nav-icon" aria-hidden="true"></i>
+                    <p>Blog</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper" style="min-height: 305px;">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0 text-dark">Dashboard</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Control Panel</li>
+              </ol>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="content" id="content">
-      <div class="row">
+      <div class="content" id="content">
+        <div class="row" style="height: 100%;">
           <div class="col">
-            <div class="card">
-                <div class="card-body">
-                  <h3>Create User</h3>
-                  <p>Warning! Any users created here will have full access to all API's including delete users.</p>
-                  <div id="createAlerts"></div>
-                  <form id="adminCreateUser">
-                      <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="CreateUsername" placeholder="Enter Username">
-                      </div>
-                      <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control" id="CreatePassword" placeholder="Enter Password">
-                      </div>
-                      <button type="submit" id="CreateUserButton" class="btn btn-primary">Submit</button>
-                    </form>
-                </div>
+            <div class="card" style="height: 95%; padding-bottom: 20px;">
+              <div class="card-body">
+                <h3>Create User</h3>
+                <p>Warning! Any users created here will have full access to all API's including delete users.</p>
+                <div id="createAlerts"></div>
+                <form id="adminCreateUser">
+                  <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$" class="form-control" id="CreateUsername" placeholder="Enter Username">
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="CreatePassword" placeholder="Enter Password">
+                  </div>
+                  <button type="submit" id="CreateUserButton" class="btn btn-primary">Submit</button>
+                </form>
               </div>
             </div>
-            <div class="col">
-              <div class="card">
-                  <div class="card-body">
-                    This is some text within a card body.
+          </div>
+          <div class="col">
+            <div class="card" style="height: 95%;">
+              <div class="card-body">
+                <h3>Manage Users</h3>
+                <div class="userList" style="overflow: scroll; height: 300px;">
+                  <% for(var i=0; i < users.length; i++) { %>
+                    <div class="card" style="width: 98%; margin: auto;">
+                      <div class="card-body">
+                        <%= users[i].username %>
+                        <button type="button" class="btn btn-secondary" style="float: right;" onclick="manageUser(`<%= users[i].username %>`)">Manage User</button>
+                      </div>
+                    </div>
+                    <% } %>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <footer class="main-footer">
+      <strong>Copyright © 2014-2019 <a href="http://adminlte.io">Based on AdminLTE.io</a>.</strong>
+      All rights reserved.
+      <div class="float-right d-none d-sm-inline-block">
+        <b>Version</b> 3.0.0-rc.5
+      </div>
+    </footer>
+    <div id="sidebar-overlay"></div>
   </div>
 
-  <footer class="main-footer">
-    <strong>Copyright © 2014-2019 <a href="http://adminlte.io">Based on AdminLTE.io</a>.</strong>
-    All rights reserved.
-    <div class="float-right d-none d-sm-inline-block">
-      <b>Version</b> 3.0.0-rc.5
-    </div>
-  </footer>
-<div id="sidebar-overlay"></div></div>
+  <!-- REQUIRED SCRIPTS -->
 
-<!-- REQUIRED SCRIPTS -->
+  <!-- jQuery -->
+  <script src="/cdn/js/jquery/jquery.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="/cdn/js/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- AdminLTE -->
+  <script src="/cdn/js/adminlte.min.js"></script>
+  <!-- Panel JS -->
+  <script src="/cdn/js/controlPanel.js"></script>
 
-<!-- jQuery -->
-<script src="/cdn/js/jquery/jquery.min.js"></script>
-<!-- Bootstrap -->
-<script src="/cdn/js/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- AdminLTE -->
-<script src="/cdn/js/adminlte.min.js"></script>
-<!-- Panel JS -->
-<script src="/cdn/js/controlPanel.js"></script>
-
-<!-- Quick Patch to remove captchapage which is annoying -->
-<style>
-    .grecaptcha-badge{
-      visibility: collapse !important;  
+  <!-- Quick Patch to remove captchapage which is annoying -->
+  <style>
+    .grecaptcha-badge {
+      visibility: collapse !important;
     }
-</style>
+  </style>
 
 
 
-</body></html>
+</body>
+
+</html>

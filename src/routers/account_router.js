@@ -11,7 +11,7 @@ router.get('/',async function (req, res) {
         if (currentUser["ERR"]) {
             res.send(`An Error has occoured: ${currentUser.ERR}`)
         }
-        res.render('../src/views/account.ejs',{username:currentUser["username"], SITEKEY : process.env.CAPTCHA3_SITEKEY})
+        res.render('../src/views/account.ejs',{username:currentUser["username"], SITEKEY : process.env.CAPTCHA3_SITEKEY, users:authAPI.getAllUsers()})
     }
 })
 
