@@ -1,0 +1,49 @@
+{
+  "name": "untitled-blogging-app",
+  "version": "1.0.0",
+  "description": "I decided to make an blogging app, Powered by node.js and used it as a way to learn typescript",
+  "main": "src/app.js",
+  "scripts": {
+    "setup": "npm run build && node dist/connections/init_app.js",
+    "build": "rimraf dist/ && babel ./src/ --out-dir dist/ --ignore ./node_modules",
+    "start": "npm run build && node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PineappleIOnic/untitled-blogging-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PineappleIOnic/untitled-blogging-app/issues"
+  },
+  "homepage": "https://github.com/PineappleIOnic/untitled-blogging-app#readme",
+  "dependencies": {
+    "argon2": "^0.25.0",
+    "connect-redis": "^4.0.3",
+    "dotenv": "^8.1.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "helmet": "^3.21.1",
+    "node-fetch": "^2.6.0",
+    "nodemon": "^1.19.3",
+    "pg-promise": "^9.3.3",
+    "readline-sync": "^1.4.10",
+    "redis": "^2.8.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.1",
+    "@types/node": "^12.7.12",
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^6.5.1",
+    "rimraf": "^3.0.0",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4"
+  }
+}

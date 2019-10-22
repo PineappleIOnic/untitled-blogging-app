@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>IOnic's Blog: <%= error_code %></title>
+    <script>
+        var CAPTCHASITE = '<%= SITEKEY %>'
+    </script>
+    <script src="https://www.google.com/recaptcha/api.js?render=<%= SITEKEY %>"></script>
+    <script>
+        grecaptcha.ready(function() {
+            grecaptcha.execute('<%= SITEKEY %>', {action: 'error_page'});
+        });
+    </script>
+</head>
+<body>
+    <h1>Uhh, something went wrong...</h1>
+    <%= error_code %>
+
+    <style>
+        .grecaptcha-badge{
+            visibility: collapse !important;  
+        }
+    </style>
+</body>
+</html>

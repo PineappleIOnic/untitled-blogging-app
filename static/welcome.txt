@@ -1,0 +1,3 @@
+Welcome to CDN!
+
+This is an test file to check that static is working.
