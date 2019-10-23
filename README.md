@@ -27,7 +27,8 @@ Setup isn't too complicated, clone the repository with
     SESSION_SECRET = blahblah
     CAPTCHA3_SITEKEY = Your captcha site key
     CAPTCHA3_SECRETKEY = Your captcha secret key
-Note: The server should auto detect the redis instance if it is running on the same server and doesn't have an password, connecting to an secured redis instance on a different server isn't added yet.
+    REDIS_PASS = redisPassword (If not defined it won't attempt an redis.auth)
+Note: The server should auto detect the redis instance if it is running on the same server ~~and doesn't have an password~~ connecting to an redis instance on a different server isn't added yet.
 
 After doing that simply run:
 
