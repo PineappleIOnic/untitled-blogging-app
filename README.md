@@ -1,6 +1,6 @@
 # An Untitled Blogging App
 ## About
-I was bored one day, and needed to up my database and authentication skills, so I decided to make an simple blogging app, but didn't know what to call it hence the name "untitled blogging app", This uses postgres as an database and redis and an caching server (Mainly used for sessions).
+I was bored one day, and needed to up my database and authentication skills, so I decided to make an simple blogging app, but didn't know what to call it hence the name "untitled blogging app", This uses postgreSQL as an database and redis as an caching server (Mainly used for sessions).
 
 It features the following
 
