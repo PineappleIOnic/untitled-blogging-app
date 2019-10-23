@@ -40,7 +40,7 @@ this should run you through setup and create the database tables aswell as the a
 ## Todo:
 
  - [ ] Add Option to disable captcha V3 (useful for development reasons)
- - [ ] Add redis settings to .env
+ - [x] Add redis settings to .env
  - [ ] Actually add the blogging part
  - [ ] Support Markdown in the blog
  - [ ] Add Profile Picture Uploading
