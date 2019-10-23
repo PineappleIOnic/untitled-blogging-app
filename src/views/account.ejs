@@ -10,10 +10,6 @@
 
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/58f640bc7f.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css" media="all">
-  <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-font-face.min.css"
-    media="all">
-  <link rel="stylesheet" href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-shims.min.css" media="all">
   <!-- Captcha Things -->
   <script>
     var CAPTCHASITE = '<%= SITEKEY %>'
@@ -30,6 +26,10 @@
   <link rel="stylesheet" href="/cdn/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+  <!-- Markdown-it -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/10.0.0/markdown-it.min.js"
+    integrity="sha256-YASERpEeN8gRNr/Fy4Km34WGFqIq1h6HkJMAQnVHlhk=" crossorigin="anonymous"></script>
 
 <body class="sidebar-mini" style="height: auto;">
   <div class="wrapper">
@@ -51,7 +51,7 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
-      <a href="index3.html" class="brand-link" style="text-align: center;">
+      <a href="/" class="brand-link" style="text-align: center;">
 
         <span class="brand-text font-weight-light">IOnic's Blog Admin</span>
       </a>
@@ -106,7 +106,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0 text-dark">Dashboard</h1>
+              <h1 class="m-0 text-dark" id="contentTitle">Dashboard</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -118,37 +118,41 @@
         </div>
       </div>
       <div class="content" id="content">
-        <div class="row" style="height: 100%;">
-          <div class="col">
-            <div class="card" style="height: 95%; padding-bottom: 20px;">
-              <div class="card-body">
-                <h3>Create User</h3>
-                <p>Warning! Any users created here will have full access to all API's including delete users.</p>
-                <div id="createAlerts"></div>
-                <form id="adminCreateUser">
-                  <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$" class="form-control" id="CreateUsername" placeholder="Enter Username">
-                  </div>
-                  <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="CreatePassword" placeholder="Enter Password">
-                  </div>
-                  <button type="submit" id="CreateUserButton" class="btn btn-primary">Submit</button>
-                </form>
+        <div id="userPage" hidden>
+          <div class="row" style="height: 100%;">
+            <div class="col">
+              <div class="card" style="height: 95%; padding-bottom: 20px;">
+                <div class="card-body">
+                  <h3>Create User</h3>
+                  <p>Warning! Any users created here will have full access to all API's including delete users.</p>
+                  <div id="createAlerts"></div>
+                  <form id="adminCreateUser">
+                    <div class="form-group">
+                      <label for="username">Username</label>
+                      <input type="text" pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$" class="form-control"
+                        id="CreateUsername" placeholder="Enter Username">
+                    </div>
+                    <div class="form-group">
+                      <label for="password">Password</label>
+                      <input type="password" class="form-control" id="CreatePassword" placeholder="Enter Password">
+                    </div>
+                    <button type="submit" id="CreateUserButton" class="btn btn-primary">Submit</button>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col">
-            <div class="card" style="height: 95%;">
-              <div class="card-body">
-                <h3>Manage Users</h3>
-                <div class="userList" style="overflow: scroll; height: 300px;">
-                  <% for(var i=0; i < users.length; i++) { %>
-                    <div class="card" style="width: 98%; margin: auto;">
+            <div class="col">
+              <div class="card" style="height: 95%;">
+                <div class="card-body">
+                  <h3>Manage Users</h3>
+                  <div class="userList" id="userList" style="overflow: scroll; height: 300px;">
+                    <% for(var i=0; i < users.length; i++) { %>
+                    <div class="card" style="width: 98%; margin: auto;" id="manage-<%= users[i].username %>">
                       <div class="card-body">
                         <%= users[i].username %>
-                        <button type="button" class="btn btn-secondary" style="float: right;" onclick="manageUser(`<%= users[i].username %>`)">Manage User</button>
+                        <button type="button" class="btn btn-secondary" style="float: right;" data-toggle="modal"
+                          data-target="#userConfigModal" data-username="<%= users[i].username %>"
+                          data-datecreated="<%= users[i].date_created %>">Manage User</button>
                       </div>
                     </div>
                     <% } %>
@@ -158,17 +162,98 @@
             </div>
           </div>
         </div>
+        <div id="blogPage">
+          <div class="card" style="height: 95%; width: 100%; padding-bottom: 20px;">
+            <div class="card-body">
+              <h3>Blog Posts</h3>
+              <button class="btn btn-secondary" style="float: right;" data-toggle="modal"
+                data-target="#postCreateModal">Create New</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <footer class="main-footer">
-      <strong>Copyright © 2014-2019 <a href="http://adminlte.io">Based on AdminLTE.io</a>.</strong>
-      All rights reserved.
-      <div class="float-right d-none d-sm-inline-block">
-        <b>Version</b> 3.0.0-rc.5
+  <div class="modal fade" id="userConfigModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Managing User: </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="userConfigBody">
+          <div id="userConfigAlerts"></div>
+          <div class="userAbout d-flex" style="float: left;">
+            <div class="userImage">
+              <img src="/cdn/img/default.png" style="height: 100px; width:100px; border-radius:50%;">
+            </div>
+            <div class="userInfo" style="height: 100px;line-height: 100px;">
+              <p id="configUserAbout"
+                style="margin-bottom: 0px;display: inline-block;vertical-align: middle;line-height: normal; margin-left: 10px;">
+                User: error</p>
+            </div>
+          </div>
+          <div class="userControls">
+            <button type="button" class="btn btn-danger" style="float: right;">Delete User</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
       </div>
-    </footer>
-    <div id="sidebar-overlay"></div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="postCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document" style='width: 90%; max-width: none; height: 90%; max-height: none;'>
+      <div class="modal-content" style="height: 100%">
+        <div class="modal-header">
+          <h5 class="modal-title">Creating new post: </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="postCreateBody">
+          <div id="postCreateAlert"></div>
+          <form style="height: 100%" id="adminCreatePost">
+          <div class="row" style="height: 100%">
+            <div class="col" style="height: 100%">
+                <div class="form-group">
+                  <input class="form-control" placeholder='Title' id="createPostTitle" required>
+                </div>
+                <div class="form-group" style="height: 100%">
+                  <textarea class="form-control" id="postCreateContent" placeholder="Post Content" rows="3"
+                    style="resize: none; height: 80%;" required></textarea>
+                </div>
+            </div>
+            <div class="col" style="height: 100%">
+              <h3>Preview</h3>
+              <div style="min-height: -webkit-min-content; display: flex;">
+                <div id="markdownPreview" style="flex: 1; display: flex; overflow: auto;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" id="createPostButton">Publish Post</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="main-footer">
+    <strong>Copyright © 2014-2019 <a href="http://adminlte.io">Based on AdminLTE.io</a>.</strong>
+    All rights reserved.
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Version</b> 3.0.0-rc.5
+    </div>
+  </footer>
+  <div id="sidebar-overlay"></div>
   </div>
 
   <!-- REQUIRED SCRIPTS -->

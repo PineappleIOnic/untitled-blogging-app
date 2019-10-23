@@ -24,8 +24,8 @@ function sleep(ms){
 
 let userdataLoop = async function() {
     while (true) {
-        users = await db.any('SELECT * FROM users.user_data')
-        await(sleep(1000))
+        users = await db.any('SELECT * FROM blog.user_data')
+        await(sleep(10))
     }
 }
 
@@ -52,13 +52,15 @@ let getUserdata = async function(username) {
 
 let pushUser = function(username, password) {
     // Test if DB has already got an user with this username.
-        getUserdata(username)
+        return getUserdata(username)
         .then((user) => {
-            if (user['ERR']) {
-                return (user['ERR'])
-            } else {
-                return db.none('INSERT INTO users.user_data(username, password, date_created) VALUES($1, $2, $3)', 
-                [username, password, new Date()]).then(() => {
+            if (!user['ERR']) {
+                return ('User Exists!')
+            } else if (user['ERR'] == "NO_USER_EXIST"){
+                let currentDate = new Date()
+                let formattedDate = (`${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`)
+                return db.none('INSERT INTO blog.user_data(username, password, date_created) VALUES($1, $2, $3)', 
+                [username, password, formattedDate]).then(() => {
                     return ('SUCCESS')
                 }) .catch(error => {
                     logger.log({
@@ -76,6 +78,24 @@ let pushUser = function(username, password) {
         });
     };
 
+var removeUser = function(username) {
+    return getUserdata(username).then((user) => {
+        if (user['username']) {
+            return db.none('DELETE FROM blog.user_data WHERE username = $1', 
+            [username]).then(() => {
+                return ('SUCCESS')
+            }) .catch(error => {
+                logger.log({
+                    level: 'error',
+                    message: `[Auth] ${error}`
+                });
+            })
+        } else {
+            return(`USER_NO_EXIST`)
+        }
+    })
+}
+
 var createUser = function(username, password) {
     return argon2Hash(password).then(async function (hash) {
         let ok = await pushUser(username, hash)
@@ -85,7 +105,7 @@ var createUser = function(username, password) {
 
 var authenticateUser = function(username, password) {
     if ((username == "") || (username == null)) {return "invld_usrnme"} else {
-        return db.oneOrNone('SELECT * FROM users.user_data WHERE username = $1', username)
+        return db.oneOrNone('SELECT * FROM blog.user_data WHERE username = $1', username)
         .then(async function (querry){
             if (querry) {
                 if (await argon2.verify(querry.password, password)) {
@@ -101,4 +121,4 @@ var authenticateUser = function(username, password) {
 
 }
 
-module.exports = {authenticateUser, createUser, getUserdata, getAllUsers};
+module.exports = {authenticateUser, createUser, getUserdata, getAllUsers, removeUser};

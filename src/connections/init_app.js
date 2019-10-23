@@ -49,29 +49,47 @@ try {
         console.log('Now Creating admin user...');
         let username = reader.question('Enter Username: ');
         let password = reader.question('Enter Password: ');
-        console.log(await auth.createUser(username, password));
-        console.log('Sucessfully Created User!');
+        if (await auth.createUser(username, password) == "SUCCESS") {
+            console.log('Sucessfully Created User!');
+        } else {
+            console.log('Something Went wrong when creating the user.');
+        }
     }
     console.log('Successfully connected to database! \n Now wiping and creating the correct schema...')
     db.any(`
-    DROP TABLE IF EXISTS users.user_data;
-    DROP SCHEMA IF EXISTS users;
+    DROP TABLE IF EXISTS blog.user_data;
+    DROP TABLE IF EXISTS blog.posts;
+    DROP SCHEMA IF EXISTS blog;
     `).then(() => {
         db.any(`
-            CREATE SCHEMA users
+            CREATE SCHEMA blog
                 AUTHORIZATION ${process.env.DB_USER};
-            CREATE TABLE users.user_data
+            CREATE TABLE blog.user_data
         (
             username character varying COLLATE pg_catalog."default",
             password character varying COLLATE pg_catalog."default",
-            date_created date
+            date_created character varying COLLATE pg_catalog."default"
         )
         WITH (
             OIDS = TRUE
         )
         TABLESPACE pg_default;
 
-        ALTER TABLE users.user_data
+            CREATE TABLE blog.posts
+        (
+            author character varying COLLATE pg_catalog."default",
+            title character varying COLLATE pg_catalog."default",
+            date_create character varying COLLATE pg_catalog."default",
+            actualpost character varying COLLATE pg_catalog."default"
+        )
+        WITH (
+            OIDS = TRUE
+        )
+        TABLESPACE pg_default;
+
+        ALTER TABLE blog.user_data
+        OWNER to ${process.env.DB_USER};
+        ALTER TABLE blog.posts
         OWNER to ${process.env.DB_USER};
     `).then(function() {
         console.log('Done! Database has been created.')

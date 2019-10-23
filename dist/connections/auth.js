@@ -7,6 +7,8 @@ var db = require(__dirname + '/DB.js').db;
 var logger = require(__dirname + '/logger.js');
 var argon2 = require('argon2');
 
+var users = null;
+
 var argon2Hash = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(password) {
         return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -42,13 +44,104 @@ var argon2Hash = function () {
     };
 }();
 
+function sleep(ms) {
+    return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+    });
+}
+
+var userdataLoop = function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+                switch (_context2.prev = _context2.next) {
+                    case 0:
+                        if (!true) {
+                            _context2.next = 8;
+                            break;
+                        }
+
+                        _context2.next = 3;
+                        return db.any('SELECT * FROM blog.user_data');
+
+                    case 3:
+                        users = _context2.sent;
+                        _context2.next = 6;
+                        return sleep(10);
+
+                    case 6:
+                        _context2.next = 0;
+                        break;
+
+                    case 8:
+                    case 'end':
+                        return _context2.stop();
+                }
+            }
+        }, _callee2, this);
+    }));
+
+    return function userdataLoop() {
+        return _ref2.apply(this, arguments);
+    };
+}();
+
+userdataLoop();
+
+var getAllUsers = function getAllUsers() {
+    return users;
+};
+
+var getUserdata = function () {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(username) {
+        var wantedData;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+            while (1) {
+                switch (_context3.prev = _context3.next) {
+                    case 0:
+                        wantedData = void 0;
+
+                        users.forEach(function (element) {
+                            if (element['username'] == username) {
+                                delete element["password"]; // We remove the password since no getUserdata() should ever be used to gain the password hash.
+                                wantedData = element;
+                            }
+                        });
+
+                        if (!wantedData) {
+                            _context3.next = 6;
+                            break;
+                        }
+
+                        return _context3.abrupt('return', wantedData);
+
+                    case 6:
+                        return _context3.abrupt('return', { ERR: "NO_USER_EXIST" });
+
+                    case 7:
+                    case 'end':
+                        return _context3.stop();
+                }
+            }
+        }, _callee3, this);
+    }));
+
+    return function getUserdata(_x2) {
+        return _ref3.apply(this, arguments);
+    };
+}();
+
 var pushUser = function pushUser(username, password) {
     // Test if DB has already got an user with this username.
-    return db.oneOrNone('SELECT * FROM users.user_data WHERE username = $1', username).then(function (user) {
-        if (user) {
-            return 'USR_EXIST';
-        } else {
-            db.none('INSERT INTO users.user_data(username, password, date_created) VALUES($1, $2, $3)', [username, password, new Date()]).catch(function (error) {
+    return getUserdata(username).then(function (user) {
+        if (!user['ERR']) {
+            return 'User Exists!';
+        } else if (user['ERR'] == "NO_USER_EXIST") {
+            var currentDate = new Date();
+            var formattedDate = currentDate.getDate() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getFullYear();
+            return db.none('INSERT INTO blog.user_data(username, password, date_created) VALUES($1, $2, $3)', [username, password, formattedDate]).then(function () {
+                return 'SUCCESS';
+            }).catch(function (error) {
                 logger.log({
                     level: 'error',
                     message: '[Auth] ' + error
@@ -63,31 +156,48 @@ var pushUser = function pushUser(username, password) {
     });
 };
 
+var removeUser = function removeUser(username) {
+    return getUserdata(username).then(function (user) {
+        if (user['username']) {
+            return db.none('DELETE FROM blog.user_data WHERE username = $1', [username]).then(function () {
+                return 'SUCCESS';
+            }).catch(function (error) {
+                logger.log({
+                    level: 'error',
+                    message: '[Auth] ' + error
+                });
+            });
+        } else {
+            return 'USER_NO_EXIST';
+        }
+    });
+};
+
 var createUser = function createUser(username, password) {
     return argon2Hash(password).then(function () {
-        var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(hash) {
+        var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(hash) {
             var ok;
-            return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            return regeneratorRuntime.wrap(function _callee4$(_context4) {
                 while (1) {
-                    switch (_context2.prev = _context2.next) {
+                    switch (_context4.prev = _context4.next) {
                         case 0:
-                            _context2.next = 2;
+                            _context4.next = 2;
                             return pushUser(username, hash);
 
                         case 2:
-                            ok = _context2.sent;
-                            return _context2.abrupt('return', ok);
+                            ok = _context4.sent;
+                            return _context4.abrupt('return', ok);
 
                         case 4:
                         case 'end':
-                            return _context2.stop();
+                            return _context4.stop();
                     }
                 }
-            }, _callee2, this);
+            }, _callee4, this);
         }));
 
-        return function (_x2) {
-            return _ref2.apply(this, arguments);
+        return function (_x3) {
+            return _ref4.apply(this, arguments);
         };
     }());
 };
@@ -96,53 +206,51 @@ var authenticateUser = function authenticateUser(username, password) {
     if (username == "" || username == null) {
         return "invld_usrnme";
     } else {
-        return db.oneOrNone('SELECT * FROM users.user_data WHERE username = $1', username).then(function () {
-            var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(querry) {
-                return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        return db.oneOrNone('SELECT * FROM blog.user_data WHERE username = $1', username).then(function () {
+            var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(querry) {
+                return regeneratorRuntime.wrap(function _callee5$(_context5) {
                     while (1) {
-                        switch (_context3.prev = _context3.next) {
+                        switch (_context5.prev = _context5.next) {
                             case 0:
                                 if (!querry) {
-                                    _context3.next = 10;
+                                    _context5.next = 10;
                                     break;
                                 }
 
-                                _context3.next = 3;
+                                _context5.next = 3;
                                 return argon2.verify(querry.password, password);
 
                             case 3:
-                                if (!_context3.sent) {
-                                    _context3.next = 7;
+                                if (!_context5.sent) {
+                                    _context5.next = 7;
                                     break;
                                 }
 
-                                return _context3.abrupt('return', 'AUTH_CORRECT');
+                                return _context5.abrupt('return', 'AUTH_CORRECT');
 
                             case 7:
-                                return _context3.abrupt('return', 'AUTH_INCORRECT');
+                                return _context5.abrupt('return', 'AUTH_INCORRECT');
 
                             case 8:
-                                _context3.next = 11;
+                                _context5.next = 11;
                                 break;
 
                             case 10:
-                                return _context3.abrupt('return', "USR_NOT_FOUND");
+                                return _context5.abrupt('return', "USR_NOT_FOUND");
 
                             case 11:
                             case 'end':
-                                return _context3.stop();
+                                return _context5.stop();
                         }
                     }
-                }, _callee3, this);
+                }, _callee5, this);
             }));
 
-            return function (_x3) {
-                return _ref3.apply(this, arguments);
+            return function (_x4) {
+                return _ref5.apply(this, arguments);
             };
         }());
     }
 };
 
-createUser('IOnicisere', 'Password');
-
-module.exports = { authenticateUser: authenticateUser, createUser: createUser };
+module.exports = { authenticateUser: authenticateUser, createUser: createUser, getUserdata: getUserdata, getAllUsers: getAllUsers, removeUser: removeUser };

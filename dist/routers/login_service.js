@@ -60,24 +60,26 @@ router.post('/api/login', function () {
                     case 0:
                         data = req.body;
                         _context2.next = 3;
-                        return recapchaVerify(process.env.CAPTCHA3_SECRET, data.captcha_token);
+                        return recapchaVerify(process.env.CAPTCHA3_SECRETKEY, data.captcha_token);
 
                     case 3:
                         captcha = _context2.sent;
 
-                        console.log(captcha);
-                        console.log(data.captcha_token);
-                        authAPI.authenticateUser(data.username, data.password).then(function (state) {
-                            if (state == "AUTH_CORRECT") {
-                                req.session.loggedIn = true;
-                                req.session.username = data.username;
-                                res.jsonp({ 'AUTH_CORRECT': true });
-                            } else {
-                                res.jsonp({ 'AUTH_CORRECT': false });
-                            }
-                        });
+                        if (captcha["success" == false] || captcha["score"] >= 0.3) {
+                            authAPI.authenticateUser(data.username, data.password).then(function (state) {
+                                if (state == "AUTH_CORRECT") {
+                                    req.session.loggedIn = true;
+                                    req.session.username = data.username;
+                                    res.jsonp({ 'AUTH_CORRECT': true, 'CAPTCHAREQUEST': 0 });
+                                } else {
+                                    res.jsonp({ 'AUTH_CORRECT': false, 'CAPTCHAREQUEST': 0 });
+                                }
+                            });
+                        } else {
+                            res.jsonp({ 'AUTH_CORRECT': false, 'CAPTCHAREQUEST': 1 });
+                        }
 
-                    case 7:
+                    case 5:
                     case "end":
                         return _context2.stop();
                 }
@@ -87,6 +89,110 @@ router.post('/api/login', function () {
 
     return function (_x3, _x4) {
         return _ref2.apply(this, arguments);
+    };
+}());
+
+router.post('/api/createUser', function () {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res) {
+        var data, captcha;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+            while (1) {
+                switch (_context3.prev = _context3.next) {
+                    case 0:
+                        if (!(req.session.loggedIn == true)) {
+                            _context3.next = 8;
+                            break;
+                        }
+
+                        data = req.body;
+                        _context3.next = 4;
+                        return recapchaVerify(process.env.CAPTCHA3_SECRETKEY, data.captcha_token);
+
+                    case 4:
+                        captcha = _context3.sent;
+
+                        if (captcha["success" == false] || captcha["score"] >= 0.3) {
+                            authAPI.createUser(data.username, data.password).then(function (state) {
+                                if (state == 'SUCCESS') {
+                                    res.jsonp({ 'SUCCESS': true, 'CAPTCHAREQUEST': 0 });
+                                } else {
+                                    res.jsonp({ 'SUCCESS': false, 'CAPTCHAREQUEST': 0, 'ERROR': state });
+                                }
+                            });
+                        } else {
+                            res.jsonp({ 'SUCCESS': false, 'CAPTCHAREQUEST': 1 });
+                        }
+                        _context3.next = 9;
+                        break;
+
+                    case 8:
+                        res.jsonp({ 'ERROR': '401 Unauthorised' });
+
+                    case 9:
+                    case "end":
+                        return _context3.stop();
+                }
+            }
+        }, _callee3, this);
+    }));
+
+    return function (_x5, _x6) {
+        return _ref3.apply(this, arguments);
+    };
+}());
+
+router.post('/api/deleteUser', function () {
+    var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(req, res) {
+        var data, captcha;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+            while (1) {
+                switch (_context4.prev = _context4.next) {
+                    case 0:
+                        if (!(req.session.loggedIn == true)) {
+                            _context4.next = 8;
+                            break;
+                        }
+
+                        data = req.body;
+                        _context4.next = 4;
+                        return recapchaVerify(process.env.CAPTCHA3_SECRETKEY, data.captcha_token);
+
+                    case 4:
+                        captcha = _context4.sent;
+
+                        if (captcha["success" == false] || captcha["score"] >= 0.3) {
+                            if (captcha["success" == false] || captcha["score"] >= 0.3) {
+                                if (data.username == req.session.username) {
+                                    res.jsonp({ 'SUCCESS': false, 'CAPTCHAREQUEST': 0, 'ERROR': "You can't delete yourself!" });
+                                } else {
+                                    authAPI.removeUser(data.username).then(function (state) {
+                                        if (state == 'SUCCESS') {
+                                            res.jsonp({ 'SUCCESS': true, 'CAPTCHAREQUEST': 0 });
+                                        } else {
+                                            res.jsonp({ 'SUCCESS': false, 'CAPTCHAREQUEST': 0, 'ERROR': state });
+                                        }
+                                    });
+                                }
+                            } else {
+                                res.jsonp({ 'SUCCESS': false, 'CAPTCHAREQUEST': 1 });
+                            }
+                        }
+                        _context4.next = 9;
+                        break;
+
+                    case 8:
+                        res.jsonp({ 'ERROR': '401 Unauthorised.' });
+
+                    case 9:
+                    case "end":
+                        return _context4.stop();
+                }
+            }
+        }, _callee4, this);
+    }));
+
+    return function (_x7, _x8) {
+        return _ref4.apply(this, arguments);
     };
 }());
 
@@ -103,10 +209,6 @@ router.get('/logout', function (req, res) {
 // Serve the login/register page
 router.get('/login', function (req, res) {
     res.render('../src/views/login.ejs', { SITEKEY: process.env.CAPTCHA3_SITEKEY });
-});
-
-router.get('/account', function (req, res) {
-    return;
 });
 
 module.exports = router;

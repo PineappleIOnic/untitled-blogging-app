@@ -66,12 +66,18 @@ logger.log({
 var indexRouter = require('./routers/index_router.js');
 var errorRouter = require('./routers/error_router.js');
 var loginRouter = require('./routers/login_service.js');
+var accountRouter = require('./routers/account_router.js');
+var blogRouter = require('./routers/blog_router.js');
 
 app.use('/', indexRouter);
 
 app.use('/cdn', express.static('static'));
 
 app.use('/auth', loginRouter);
+
+app.use('/account', accountRouter);
+
+app.use('/blog', blogRouter);
 
 app.use('*', errorRouter);
 

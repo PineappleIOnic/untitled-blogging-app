@@ -68,6 +68,7 @@ const indexRouter = require('./routers/index_router.js')
 const errorRouter = require('./routers/error_router.js')
 const loginRouter = require('./routers/login_service.js')
 const accountRouter = require('./routers/account_router.js')
+const blogRouter = require('./routers/blog_router.js')
 
 app.use('/', indexRouter)
 
@@ -76,6 +77,8 @@ app.use('/cdn' , express.static('static'))
 app.use('/auth', loginRouter)
 
 app.use('/account', accountRouter)
+
+app.use('/blog', blogRouter)
 
 app.use('*', errorRouter)
 
