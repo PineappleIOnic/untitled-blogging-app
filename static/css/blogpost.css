@@ -1,0 +1,58 @@
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+.blogContent {
+    box-sizing: border-box;
+    max-width: 900px;
+    margin: 2.625em auto 0;
+    padding: 0 1.75em;
+    padding-top: 10px;
+}
+
+.blogContent h1 {
+    font-size: 50px;
+    margin-bottom: 1px;
+}
+
+.blogSeperatorLine {
+    width: 100%;
+    height: 1px;
+    background-color: black;
+    margin-bottom: 10px;
+}
+
+.blogAbout {
+    font-size: 20px;
+    margin-bottom: 50px;
+}
+
+.blogAboutAuthor {
+
+}
+
+.blogAboutDate {
+    float: right;
+}
+
+.blogPost p{
+    font-size: 19px;
+    font-weight: 300;
+}
+
+.backButton {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.backButton i {
+    font-size: 50px;
+}

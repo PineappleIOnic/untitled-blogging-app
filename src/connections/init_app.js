@@ -70,9 +70,6 @@ try {
             password character varying COLLATE pg_catalog."default",
             date_created character varying COLLATE pg_catalog."default"
         )
-        WITH (
-            OIDS = TRUE
-        )
         TABLESPACE pg_default;
 
             CREATE TABLE blog.posts
@@ -81,9 +78,6 @@ try {
             title character varying COLLATE pg_catalog."default",
             date_create character varying COLLATE pg_catalog."default",
             actualpost character varying COLLATE pg_catalog."default"
-        )
-        WITH (
-            OIDS = TRUE
         )
         TABLESPACE pg_default;
 

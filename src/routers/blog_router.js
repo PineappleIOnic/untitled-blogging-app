@@ -4,6 +4,7 @@ const express = require('express')
 const router = express.Router()
 const blogAPI = require(__dirname + "/../connections/blog.js")
 const fetch = require("node-fetch");
+var md = require('markdown-it')();
 
 router.use(express.json())
 
@@ -20,6 +21,16 @@ var recapchaVerify = async function(secret, token) {
     return responseJSON
 }
 
+router.get('/post/:postTitle', async function (req, res) {
+    let blogWanted = await blogAPI.getBlogPost(req.params['postTitle'])
+    if (!blogWanted['ERR']) {
+        let blogContent = md.render(blogWanted.actualpost);
+        res.render('../src/views/blogPost_view.ejs', {data:blogWanted, blogContent:blogContent})
+    } else {
+        res.render('../src/views/error_view.ejs', {error_code:404, SITEKEY : process.env.CAPTCHA3_SITEKEY})
+    }
+})
+
 router.post('/api/createPost', async function (req, res) {
     if ((req.session.loggedIn == false) || (req.session.loggedIn == null)) {
         res.jsonp({'ERROR':'401 Unauthorised'})
@@ -28,8 +39,9 @@ router.post('/api/createPost', async function (req, res) {
         let missingKey = false
         let expectedOptions = [data.title, data.actualPost, data.captcha_token]
         for(var key in expectedOptions) {
-            if (expectedOptions[key] == '') {
+            if ((expectedOptions[key] == '') || (!expectedOptions[key])) {
                 res.jsonp({'SUCCESS':false,'ERROR':`Missing Data: ${key}`})
+                console.log('MISSING KEY!')
                 missingKey = true
             }
         }

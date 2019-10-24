@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>IOnic's Blog | <%= data.title %></title>
+    <link rel="stylesheet" href="/cdn/css/blogpost.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&display=swap" rel="stylesheet"> 
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/58f640bc7f.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <button class='backButton'><i class="fas fa-arrow-left"></i></button>
+    <div class='blogContent'>
+        <h1><strong><%= data.title %></strong></h1>
+        <div class='blogSeperatorLine'></div>
+        <div class='blogAbout'>
+            <span class='blogAboutAuthor'><i class="far fa-user"></i> <%= data.author %></span>
+            <span class='blogAboutDate'><i class="far fa-calendar-alt"></i> <%= data.date_create %></span>
+        </div>
+        <div class='blogPost'>
+            <%- blogContent %>
+        </div>
+    </div>    
+</body>
+</html>

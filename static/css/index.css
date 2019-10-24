@@ -1,0 +1,14 @@
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+.postCard {
+    width: 50%;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.listPosts {
+    display: flex;
+    margin: 10%;
+}

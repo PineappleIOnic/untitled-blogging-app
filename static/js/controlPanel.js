@@ -114,7 +114,6 @@ $('#userConfigModal').on('show.bs.modal', function (event) {
     modal.find('.modal-title').text('Managing User: ' + username)
     modal.find('.userControls').html(`<button type="button" class="btn btn-danger" style="float: right;" onclick="deleteUser('${username}')">Delete User</button>`)
     $('#configUserAbout').html(`User: ${username} <br> Creation Date: ${dateCreated}`)
-
 })
 
 // Markdown Previewer:
@@ -141,7 +140,7 @@ var createBlogPost = async function(title, actualPost) {
             } else if (jsonResponse['CAPTCHAREQUEST'] == 1){
                 return('CAPTCHA_FAIL')
             } else {
-                return jsonResponse['ERROR']
+                return jsonResponse['ERR']
             }
         })
     } catch(err) {
@@ -155,15 +154,18 @@ $("#adminCreatePost").on("submit", async function (event) {
     $('#createPostButton').html(
         `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`
     );
-    let postStatus = await createBlogPost($('createPostTitle').val(),$('postCreateContent').val())
+    let postStatus = await createBlogPost($('#createPostTitle').val(),$('#postCreateContent').val())
     if (postStatus == 'SUCCESS') {
-        console.log('SUCCESS')
+        $('#postCreateAlert').html(`<div class="alert alert-success" role="alert">Post Successfully Created!</div>`)
     } else if (postStatus == 'CAPTCHA_FAIL') {
         console.log(postStatus)
     } else {
-        console.log(postStatus)
+        $('#postCreateAlert').html(`<div class="alert alert-danger" role="alert">ERROR: ${postStatus}</div>`)
     }
-    
+    $("#createPostButton").prop("disabled", false);
+    $('#createPostButton').html(
+        `Submit Post`
+    );
 });
 
 

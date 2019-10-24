@@ -29,8 +29,27 @@ let titleCollision = function (title) {
     return isCollision
 }
 
+let getBlogPost = async function(title) {
+    let postWanted = null
+    blogData.forEach(element => {
+        if (element['title'] == title) {
+            postWanted = element
+        }
+    })
+    if (postWanted) {
+        return postWanted
+    } else {
+        return {ERR:"postNotFound"}
+    }
+}
+
+let getAllPosts = function() {
+    return blogData
+}
+
 let createPost = async function (username, title, actualPost) {
     if (titleCollision(title) == false) {
+        getAllPosts()
         let currentDate = new Date()
         let formattedDate = (`${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`)
         return db.none('INSERT INTO blog.posts(author, title, date_create, actualpost) VALUES($1, $2, $3, $4)',
@@ -44,4 +63,4 @@ let createPost = async function (username, title, actualPost) {
     }
 }
 
-module.exports = {createPost}
+module.exports = {createPost, getBlogPost, getAllPosts}

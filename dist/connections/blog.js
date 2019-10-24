@@ -6,7 +6,13 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 var db = require(__dirname + '/DB.js').db;
 var logger = require(__dirname + '/logger.js');
 
-blogData = null;
+var blogData = null;
+
+function sleep(ms) {
+    return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+    });
+}
 
 var blogdataLoop = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {

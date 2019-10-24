@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
@@ -7,6 +7,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 var express = require('express');
 var router = express.Router();
 var blogAPI = require(__dirname + "/../connections/blog.js");
+var fetch = require("node-fetch");
 
 router.use(express.json());
 
@@ -19,7 +20,7 @@ var recapchaVerify = function () {
                     case 0:
                         data = { 'secret': secret, 'response': token };
                         _context.next = 3;
-                        return fetch('https://www.google.com/recaptcha/api/siteverify?secret=' + secret + '&response=' + token, {
+                        return fetch("https://www.google.com/recaptcha/api/siteverify?secret=" + secret + "&response=" + token, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -34,10 +35,10 @@ var recapchaVerify = function () {
 
                     case 6:
                         responseJSON = _context.sent;
-                        return _context.abrupt('return', responseJSON);
+                        return _context.abrupt("return", responseJSON);
 
                     case 8:
-                    case 'end':
+                    case "end":
                         return _context.stop();
                 }
             }
@@ -72,7 +73,7 @@ router.post('/api/createPost', function () {
 
                         for (key in expectedOptions) {
                             if (expectedOptions[key] == '') {
-                                res.jsonp({ 'SUCCESS': false, 'ERROR': 'Missing Data: ' + key });
+                                res.jsonp({ 'SUCCESS': false, 'ERROR': "Missing Data: " + key });
                                 missingKey = true;
                             }
                         }
@@ -99,7 +100,7 @@ router.post('/api/createPost', function () {
                         }
 
                     case 12:
-                    case 'end':
+                    case "end":
                         return _context2.stop();
                 }
             }
