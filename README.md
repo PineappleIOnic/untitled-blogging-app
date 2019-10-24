@@ -1,6 +1,6 @@
 # An Untitled Blogging App
 ## About
-I was bored one day, and needed to up my database and authentication skills, so I decided to make an simple blogging app, but didn't know what to call it hence the name "untitled blogging app", This uses postgres as an database and redis and an caching server (Mainly used for sessions).
+I was bored one day, and needed to up my database and authentication skills, so I decided to make an simple blogging app, but didn't know what to call it hence the name "untitled blogging app", This uses postgreSQL as an database and redis as an caching server (Mainly used for sessions).
 
 It features the following
 
@@ -27,7 +27,8 @@ Setup isn't too complicated, clone the repository with
     SESSION_SECRET = blahblah
     CAPTCHA3_SITEKEY = Your captcha site key
     CAPTCHA3_SECRETKEY = Your captcha secret key
-Note: The server should auto detect the redis instance if it is running on the same server and doesn't have an password, connecting to an secured redis instance on a different server isn't added yet.
+    REDIS_PASS = redisPassword (If not defined it won't attempt an redis.auth)
+Note: The server should auto detect the redis instance if it is running on the same server ~~and doesn't have an password~~ connecting to an redis instance on a different server isn't added yet.
 
 After doing that simply run:
 
@@ -39,7 +40,7 @@ this should run you through setup and create the database tables aswell as the a
 ## Todo:
 
  - [ ] Add Option to disable captcha V3 (useful for development reasons)
- - [ ] Add redis settings to .env
+ - [x] Add redis settings to .env
  - [ ] Actually add the blogging part
  - [ ] Support Markdown in the blog
  - [ ] Add Profile Picture Uploading
