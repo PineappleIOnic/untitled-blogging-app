@@ -1,4 +1,7 @@
 # An Untitled Blogging App
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/PineappleIOnic/untitled-blogging-app.svg)](https://greenkeeper.io/)
+
 ## About
 I was bored one day, and needed to up my database and authentication skills, so I decided to make an simple blogging app, but didn't know what to call it hence the name "untitled blogging app", This uses postgreSQL as an database and redis as an caching server (Mainly used for sessions).
 
