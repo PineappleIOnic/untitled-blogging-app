@@ -44,10 +44,11 @@ this should run you through setup and create the database tables aswell as the a
 
  - [ ] Add Option to disable captcha V3 (useful for development reasons)
  - [x] Add redis settings to .env
- - [ ] Actually add the blogging part
- - [ ] Support Markdown in the blog
+ - [x] Actually add the blogging part
+ - [x] Support Markdown in the blog
  - [ ] Add Profile Picture Uploading
  - [ ] Add serverside API spam prevention
+ - [ ] Add password bruteforce prevention
 ## Licence
 This entire thing is licenced under MIT (Not too sure about the modules), feel free to fork it and use it in your own project. If you love this, then feel free to credit me and add an link to my github.
 
