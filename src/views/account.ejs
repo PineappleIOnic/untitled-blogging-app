@@ -41,10 +41,11 @@
           <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars" aria-hidden="true"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="/" class="nav-link">Home</a>
+          <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
         </li>
       </ul>
       <ul class="navbar-nav ml-auto">
+          <a href="/auth/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </ul>
     </nav>
 
@@ -145,7 +146,7 @@
               <div class="card" style="height: 95%;">
                 <div class="card-body">
                   <h3>Manage Users</h3>
-                  <div class="userList" id="userList" style="overflow: scroll; height: 300px;">
+                  <div class="userList" id="userList" style="overflow-y: scroll; height: 300px;">
                     <% for(var i=0; i < users.length; i++) { %>
                     <div class="card" style="width: 98%; margin: auto;" id="manage-<%= users[i].username %>">
                       <div class="card-body">
@@ -162,10 +163,21 @@
             </div>
           </div>
         </div>
-        <div id="blogPage">
+        <div id="blogPage" hidden>
           <div class="card" style="height: 95%; width: 100%; padding-bottom: 20px;">
             <div class="card-body">
               <h3>Blog Posts</h3>
+              <% for(var i=0; i < posts.length; i++) { %>
+                <div class="card" id='post-<%=i%>'>
+                  <div class="card-body">
+                    <%= posts[i].title %>
+                    <button type="button" class="btn btn-danger" style='float: right;' id='deleteButton-<%=i%>' onclick='deletePost(`<%=posts[i].title%>`,<%=i%>)'>Delete</button>
+                    <button type="button" class="btn btn-secondary" data-post='<%=posts[i].title%>' data-toggle="modal"
+                      data-target="#postCreateModal" style='float: right; margin-right: 10px;'>Edit</button>
+                      <button type="button" class="btn btn-primary" style='float: right; margin-right: 10px;' onclick='location.href = `/blog/post/<%=posts[i].title%>`'>View Post</button>
+                  </div>
+                </div>
+              <% } %>
               <button class="btn btn-secondary" style="float: right;" data-toggle="modal"
                 data-target="#postCreateModal">Create New</button>
             </div>
@@ -210,39 +222,7 @@
   <div class="modal fade" id="postCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document" style='width: 90%; max-width: none; height: 90%; max-height: none;'>
       <div class="modal-content" style="height: 100%">
-        <div class="modal-header">
-          <h5 class="modal-title">Creating new post: </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body" id="postCreateBody">
-          <div id="postCreateAlert"></div>
-          <form style="height: 550px" id="adminCreatePost">
-          <div class="row" style="height: 100%">
-            <div class="col" style="height: 100%">
-                <div class="form-group">
-                  <input class="form-control" placeholder='Title' id="createPostTitle" required>
-                </div>
-                <div class="form-group" style="height: 100%">
-                  <textarea class="form-control" id="postCreateContent" placeholder="Post Content" rows="3"
-                    style="resize: none; height: 80%;" required></textarea>
-                </div>
-            </div>
-            <div class="col" style="height: 100%">
-              <h3>Preview</h3>
-              <div style="display: block; height: 100%;">
-                <div id="markdownPreview" style="display: block; height: 100%; overflow-y: scroll;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" id="createPostButton">Publish Post</button>
-        </div>
-        </form>
-      </div>
+          <iframe src="/blog/postEditor/" id='postEditor' frameborder="0" style='height: 100%; width: 100%'></iframe> 
     </div>
   </div>
 

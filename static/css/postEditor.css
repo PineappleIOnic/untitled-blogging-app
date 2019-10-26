@@ -1,0 +1,10 @@
+.editorContainer {
+    width: 100%;
+    overflow: hidden;
+    padding: 50px;
+}
+
+.formButtons {
+    margin-top: 1%;
+    float: right;
+}
