@@ -23,7 +23,7 @@ let RedisStore = require('connect-redis')(session)
 
 let redis = require("redis")
 
-let redisClient = redis.createClient(); // No Ability to connect to server not localhosted, since realistically they should be on the same network.
+let redisClient = redis.createClient({url:process.env.REDIS_URL}); // No Ability to connect to server not localhosted, since realistically they should be on the same network.
 
 if (process.env.REDIS_PASS) {
   redisClient.auth(process.env.REDIS_PASS)
