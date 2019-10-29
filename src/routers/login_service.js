@@ -102,14 +102,8 @@ router.post("/api/deleteUser", async function(req, res) {
 });
 
 router.get("/logout", (req, res) => {
-  req.session.regenerate(function(err) {
-    if (err != null) {
-      logger.log({
-        level: "error",
-        message: "[Session] " + err
-      });
-    }
-  });
+  req.session.loggedIn = false;
+  req.session.username = null;
   res.redirect("/");
 });
 
