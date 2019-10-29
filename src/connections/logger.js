@@ -24,7 +24,12 @@ if (process.env.NODE_ENV == "production") {
     })
   );
   if (process.env.SENTRY_ENABLED) {
-    logger.add(new Sentry({ level:"error", handleExceptions: true}))
+    logger.add(new Sentry({level:"error", handleExceptions: true}))
+    logger.add(new Sentry({level:"warn"}))
+    logger.log({
+      level: "warn",
+      message: `[Blog] Server: ${process.env.SERVER_NAME || "Untitled Server"} is now powering up.`
+    });
   }
   logger.add(new winston.transports.File({ filename: "./logs/combined.log" }));
 }

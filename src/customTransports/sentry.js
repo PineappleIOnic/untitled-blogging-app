@@ -18,7 +18,11 @@ module.exports = class sentry extends Transport {
   log(info, callback) {
     setImmediate(() => {
         Sentry.configureScope(function(scope) {
+          if (info.level == "warn") {
+            scope.setLevel('warning');
+          }else {
             scope.setLevel(info.level);
+          }
         });
         Sentry.captureMessage(info.message);
     });
