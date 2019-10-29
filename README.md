@@ -1,3 +1,4 @@
+
 # An Untitled Blogging App
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/PineappleIOnic/untitled-blogging-app.svg)](https://greenkeeper.io/)
@@ -12,8 +13,9 @@ It features the following
 - Bootstrap Centered Design
 - An Admin Panel from [adminLTE](https://github.com/ColorlibHQ/AdminLTE)
 - Captcha V3 on all pages.
+- Sentry Intergration
+- Rate limiting support
 
-I do not recomend using this as an full blog in the state it is in right now, the actual blog seciton isn't even working yet.
 ## Setup
 Setup isn't too complicated, clone the repository with
 
@@ -21,11 +23,14 @@ Setup isn't too complicated, clone the repository with
    Then create an .env file in the following format:
    
 
+    NODE_ENV = dev
     DATABASE_URL = (an postgres connection url, etc: "postgres://username:password@host:port/database")
     SESSION_SECRET = (An random string generated cryptographically)
     CAPTCHA3_SITEKEY = Your captcha site key
     CAPTCHA3_SECRETKEY = Your captcha secret key
     REDIS_URL = (An redis connection URL, etc: 'redis://username:password@host:port')
+
+Note:  If node_env is "production" then unhandled exceptions and errors will not be printed to console but will instead be logged at `/logs/`and if sentry is enabled also logged there.
 
 After doing that simply run:
 
@@ -34,6 +39,39 @@ After doing that simply run:
 
     npm run setup
 this should run you through setup and create the database tables aswell as the admin user, aswell as verify your .env settings.
+
+## Anti-DDOS
+Anti-DDOS is done by the APISecure.js within the `/src/connections`
+### Rate limiting Config:
+Config for the anti-DDOS is done within the `/src/APISecure.json` which by default looks something like this:
+```json
+{
+  "ratelimiter": {
+    "rules": {
+      "default": {
+        "decayTime": 10,
+        "concurrentRequests": 100
+      },
+      "/": {
+        "decayTime": 10,
+        "concurrentRequests": 100
+      }
+    }
+  }
+}
+```
+Please note that default is required and will cause an crash if it isn't there as it is an fallback when a path cannot be found.
+
+## Sentry
+Support for sentry has been added in winston by an custom transport to enable it simply add the following to your .env or enviroment variables
+
+```
+SENTRY_DSN = (Your DSN)
+SENTRY_ENABLED = true
+```
+Currently it only reports errors and unhandled exceptions,
+The blog will not send any data to sentry unless `NODE_ENV = production` within .env or enviroment variables.
+
 ## Todo:
 
  - [ ] Add Option to disable captcha V3 (useful for development reasons)
@@ -41,8 +79,7 @@ this should run you through setup and create the database tables aswell as the a
  - [x] Actually add the blogging part
  - [x] Support Markdown in the blog
  - [ ] Add Profile Picture Uploading
- - [ ] Add serverside API spam prevention
+ - [x] Add serverside API spam prevention
  - [ ] Add password bruteforce prevention
 ## Licence
 This entire thing is licenced under MIT (Not too sure about the modules), feel free to fork it and use it in your own project. If you love this, then feel free to credit me and add an link to my github.
-
