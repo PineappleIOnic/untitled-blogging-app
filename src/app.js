@@ -23,7 +23,8 @@ let RedisStore = require('connect-redis')(session)
 
 let redis = require("redis")
 
-let redisClient = redis.createClient({url:process.env.REDIS_URL}); // No Ability to connect to server not localhosted, since realistically they should be on the same network.
+var redisClient = redis.createClient({url:process.env.REDIS_URL});
+
 
 if (process.env.REDIS_PASS) {
   redisClient.auth(process.env.REDIS_PASS)
@@ -34,6 +35,7 @@ app.use(
     store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET || crypto.randomBytes(20).toString('hex'),
     resave: false,
+    saveUninitialized: false
   })
 )
 
@@ -59,6 +61,15 @@ if (! process.env.SESSION_SECRET) {
 
 // Used to fake the PoweredBy Header, Just here for a proof of concept (Can Deter Hackers from exploiting node.js or express vulerbilties)
 app.use(helmet.hidePoweredBy({ setTo: 'PHP 4.2.0' }))
+
+// APISecure Implementation
+const APISecure = require('./connections/APISecure.js')
+
+app.use(APISecure.requestLogger)
+app.use(APISecure.ratelimit)
+
+// Used for getting IP for anti-DDOS
+app.set('trust proxy', true)
 
 const port = process.env.PORT || 8080;
 

@@ -1,0 +1,14 @@
+{
+  "ratelimiter": {
+    "rules": {
+      "default": {
+        "decayTime": 10,
+        "concurrentRequests": 100
+      },
+      "/": {
+        "decayTime": 10,
+        "concurrentRequests": 100
+      }
+    }
+  }
+}
