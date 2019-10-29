@@ -1,5 +1,4 @@
 const Transport = require('winston-transport');
-const util = require('util');
 const Sentry = require('@sentry/node');
 
 //

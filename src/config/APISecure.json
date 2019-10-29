@@ -1,4 +1,5 @@
 {
+  "blacklist": [],
   "ratelimiter": {
     "rules": {
       "default": {
@@ -10,7 +11,7 @@
         "concurrentRequests": 10
       },
       "/auth/api/createUser": {
-        "decayTime":1000,
+        "decayTime": 1000,
         "concurrentRequests": 3
       }
     }

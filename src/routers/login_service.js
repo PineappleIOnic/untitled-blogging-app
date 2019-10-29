@@ -2,7 +2,6 @@
 const express = require("express");
 const router = express.Router();
 const fetch = require("node-fetch");
-const logger = require(__dirname + "/../connections/logger.js");
 const authAPI = require(__dirname + "/../connections/auth.js");
 
 router.use(express.json());
