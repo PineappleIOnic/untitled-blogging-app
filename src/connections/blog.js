@@ -4,20 +4,9 @@ const logger = require(__dirname + "/logger.js");
 
 var blogData = null;
 
-function sleep(ms) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
-}
-
-let blogdataLoop = async function() {
-  while (true) {
-    blogData = await db.any("SELECT * FROM blog.posts");
-    await sleep(200);
-  }
-};
-
-blogdataLoop();
+setInterval(async function() {
+  blogData = await db.any("SELECT * FROM blog.posts");
+}, 10);
 
 let titleCollision = function(title) {
   let isCollision = false;

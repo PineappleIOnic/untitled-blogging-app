@@ -17,7 +17,9 @@
   <script src="https://www.google.com/recaptcha/api.js?render=<%= SITEKEY %>"></script>
   <script>
     grecaptcha.ready(function () {
-      grecaptcha.execute('<%= SITEKEY %>', { action: 'control_panel' });
+      grecaptcha.execute('<%= SITEKEY %>', {
+        action: 'control_panel'
+      });
     });
   </script>
   <!-- IonIcons -->
@@ -45,7 +47,7 @@
         </li>
       </ul>
       <ul class="navbar-nav ml-auto">
-          <a href="/auth/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="/auth/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </ul>
     </nav>
 
@@ -168,15 +170,17 @@
             <div class="card-body">
               <h3>Blog Posts</h3>
               <% for(var i=0; i < posts.length; i++) { %>
-                <div class="card" id='post-<%=i%>'>
-                  <div class="card-body">
-                    <%= posts[i].title %>
-                    <button type="button" class="btn btn-danger" style='float: right;' id='deleteButton-<%=i%>' onclick='deletePost(`<%=posts[i].title%>`,<%=i%>)'>Delete</button>
-                    <button type="button" class="btn btn-secondary" data-post='<%=posts[i].title%>' data-toggle="modal"
-                      data-target="#postCreateModal" style='float: right; margin-right: 10px;'>Edit</button>
-                      <button type="button" class="btn btn-primary" style='float: right; margin-right: 10px;' onclick='location.href = `/blog/post/<%=posts[i].title%>`'>View Post</button>
-                  </div>
+              <div class="card" id='post-<%=i%>'>
+                <div class="card-body">
+                  <%= posts[i].title %>
+                  <button type="button" class="btn btn-danger" style='float: right;' id='deleteButton-<%=i%>'
+                    onclick='deletePost(`<%=posts[i].title%>`,<%=i%>)'>Delete</button>
+                  <button type="button" class="btn btn-secondary" data-post='<%=posts[i].title%>' data-toggle="modal"
+                    data-target="#postCreateModal" style='float: right; margin-right: 10px;'>Edit</button>
+                  <button type="button" class="btn btn-primary" style='float: right; margin-right: 10px;'
+                    onclick='location.href = `/blog/post/<%=posts[i].title%>`'>View Post</button>
                 </div>
+              </div>
               <% } %>
               <button class="btn btn-secondary" style="float: right;" data-toggle="modal"
                 data-target="#postCreateModal">Create New</button>
@@ -208,8 +212,8 @@
                 User: error</p>
             </div>
           </div>
-          <div class="userControls">
-            <button type="button" class="btn btn-danger" style="float: right;">Delete User</button>
+          <div class="userControls" style='position: relative; height: 100%'>
+            <button type="button" class="btn btn-danger" style="position:absolute; right: 1px;">Delete User</button>
           </div>
         </div>
         <div class="modal-footer">
@@ -219,21 +223,48 @@
     </div>
   </div>
 
-  <div class="modal fade" id="postCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document" style='width: 90%; max-width: none; height: 90%; max-height: none;'>
-      <div class="modal-content" style="height: 100%">
-          <iframe src="/blog/postEditor/" id='postEditor' frameborder="0" style='height: 100%; width: 100%'></iframe> 
+  <div class="modal fade" id="passwordChangeModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Changing Password for user: </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="passwordChangeBody">
+          <div id='passwordChangeAlerts'></div>
+            <form id='passwordChangeForm'>
+                <div class="form-group">
+                  <label for="passwordChange">Password</label>
+                  <input type="password" class="form-control" id="passwordChange" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                  <label for="passwordChangeConfirm">Confirm Password</label>
+                  <input type="password" class="form-control" id="passwordChangeConfirm" placeholder="Confirm Password" required>
+                </div>
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+          </div>
+      </div>
     </div>
   </div>
 
-  <footer class="main-footer">
-    <strong>Copyright © 2014-2019 <a href="http://adminlte.io">Based on AdminLTE.io</a>.</strong>
-    All rights reserved.
-    <div class="float-right d-none d-sm-inline-block">
-      <b>Version</b> 3.0.0-rc.5
+  <div class="modal fade" id="postCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document" style='width: 90%; max-width: none; height: 90%; max-height: none;'>
+      <div class="modal-content" style="height: 100%">
+        <iframe src="/blog/postEditor/" id='postEditor' frameborder="0" style='height: 100%; width: 100%'></iframe>
+      </div>
     </div>
-  </footer>
-  <div id="sidebar-overlay"></div>
+
+    <footer class="main-footer">
+      <strong>Copyright © 2014-2019 <a href="http://adminlte.io">Based on AdminLTE.io</a>.</strong>
+      All rights reserved.
+      <div class="float-right d-none d-sm-inline-block">
+        <b>Version</b> 3.0.0-rc.5
+      </div>
+    </footer>
+    <div id="sidebar-overlay"></div>
   </div>
 
   <!-- REQUIRED SCRIPTS -->

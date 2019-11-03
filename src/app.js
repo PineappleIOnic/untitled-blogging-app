@@ -67,6 +67,7 @@ const APISecure = require('./connections/APISecure.js')
 
 app.use(APISecure.requestLogger)
 app.use(APISecure.ratelimit)
+app.use(APISecure.blacklist)
 
 // Used for getting IP for anti-DDOS
 app.set('trust proxy', true)

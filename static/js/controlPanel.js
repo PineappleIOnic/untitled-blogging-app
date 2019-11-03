@@ -18,7 +18,7 @@ $("#adminCreateUser").on("submit", async function(event) {
   try {
     grecaptcha.ready(function() {
       return grecaptcha
-        .execute("6LfWM74UAAAAAGmAhvF8imDZAZWDjV6DVfRVOros", {
+        .execute(CAPTCHASITE, {
           action: "adminCreateUser"
         })
         .then(async function(token) {
@@ -63,9 +63,11 @@ $("#adminCreateUser").on("submit", async function(event) {
 });
 
 $("#postCreateModal").on("show.bs.modal", function(event) {
-  let button = $(event.relatedTarget)
-  let recipient = button.data('post')
-  $("#postCreateModal").html(`<div class="modal-dialog" role="document" style='width: 90%; max-width: none; height: 90%; max-height: none;'> <div class="modal-content" style="height: 100%"> <iframe src="/blog/postEditor/${recipient}" id='postEditor' frameborder="0" style='height: 100%; width: 100%'></iframe></div>`);
+  let button = $(event.relatedTarget);
+  let recipient = button.data("post");
+  $("#postCreateModal").html(
+    `<div class="modal-dialog" role="document" style='width: 90%; max-width: none; height: 90%; max-height: none;'> <div class="modal-content" style="height: 100%"> <iframe src="/blog/postEditor/${recipient}" id='postEditor' frameborder="0" style='height: 100%; width: 100%'></iframe></div>`
+  );
 });
 
 let createNewNode = function(username) {
@@ -93,7 +95,7 @@ let deleteUser = function(username) {
     );
   try {
     return grecaptcha
-      .execute("6LfWM74UAAAAAGmAhvF8imDZAZWDjV6DVfRVOros", {
+      .execute(CAPTCHASITE, {
         action: "adminRemoveUser"
       })
       .then(async function(token) {
@@ -134,6 +136,23 @@ let deleteUser = function(username) {
   }
 };
 
+// Change Password
+
+// Modal Things
+$("#passwordChangeModal").on("show.bs.modal", function() {
+  $("#userConfigModal").modal("hide");
+});
+
+$( "#passwordChangeForm" ).submit(function( event ) {
+  if ($("#passwordChange").val() == $("#passwordChangeConfirm").val()) {
+    console.log($("#passwordChange").val())
+  } else {
+    $("#passwordChangeAlerts")
+      .html(`<div class="alert alert-danger" role="alert"> The Passwords do not match. </div>`);
+  }
+  event.preventDefault();
+});
+
 // Configure user things
 
 $("#userConfigModal").on("show.bs.modal", function(event) {
@@ -142,11 +161,10 @@ $("#userConfigModal").on("show.bs.modal", function(event) {
   let dateCreated = button.data("datecreated");
   let modal = $(this);
   modal.find(".modal-title").text("Managing User: " + username);
-  modal
-    .find(".userControls")
-    .html(
-      `<button type="button" class="btn btn-danger" style="float: right;" onclick="deleteUser('${username}')">Delete User</button>`
-    );
+  modal.find(".userControls").html(
+    `<button type="button" class="btn btn-danger" style="position:absolute; right: 1px;" onclick="deleteUser('${username}')">Delete User</button> 
+      <button type="button" class="btn btn-secondary" style="position:absolute; right: 1px; bottom: 1px;" data-toggle="modal" data-target="#passwordChangeModal">Change Password</button>`
+  );
   $("#configUserAbout").html(
     `User: ${username} <br> Creation Date: ${dateCreated}`
   );
@@ -180,11 +198,11 @@ $("#adminCreatePost").on("submit", async function(event) {
 let deletePost = function(title, elementId) {
   $(`#deleteButton-${elementId}`).prop("disabled", true);
   $(`#deleteButton-${elementId}`).html(
-      `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...`
-    );
+    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...`
+  );
   try {
     return grecaptcha
-      .execute("6LfWM74UAAAAAGmAhvF8imDZAZWDjV6DVfRVOros", {
+      .execute(CAPTCHASITE, {
         action: "adminRemovePost"
       })
       .then(async function(token) {
@@ -197,14 +215,14 @@ let deletePost = function(title, elementId) {
         });
         let jsonResponse = await response.json();
         if (jsonResponse["SUCCESS"] == true) {
-          console.log(`Success`)
-          $(`#post-${elementId}`).remove()
+          console.log(`Success`);
+          $(`#post-${elementId}`).remove();
         } else {
           if (jsonResponse["CAPTCHAREQUEST"] == 1) {
             $(`#deleteButton-${elementId}`).prop("disabled", false);
             $(`#deleteButton-${elementId}`).html(
-                `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span> Failed To Delete!`
-              );
+              `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span> Failed To Delete!`
+            );
           } else {
             $(`#deleteButton-${elementId}`).prop("disabled", false);
             $(`#deleteButton-${elementId}`).html(

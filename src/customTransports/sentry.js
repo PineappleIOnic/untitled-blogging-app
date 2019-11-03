@@ -1,5 +1,4 @@
 const Transport = require('winston-transport');
-const util = require('util');
 const Sentry = require('@sentry/node');
 
 //
@@ -18,7 +17,11 @@ module.exports = class sentry extends Transport {
   log(info, callback) {
     setImmediate(() => {
         Sentry.configureScope(function(scope) {
+          if (info.level == "warn") {
+            scope.setLevel('warning');
+          }else {
             scope.setLevel(info.level);
+          }
         });
         Sentry.captureMessage(info.message);
     });

@@ -2,7 +2,6 @@
 const express = require("express");
 const router = express.Router();
 const fetch = require("node-fetch");
-const logger = require(__dirname + "/../connections/logger.js");
 const authAPI = require(__dirname + "/../connections/auth.js");
 
 router.use(express.json());
@@ -76,25 +75,46 @@ router.post("/api/deleteUser", async function(req, res) {
       data.captcha_token
     );
     if (captcha["success" == false] || captcha["score"] >= 0.3) {
-      if (captcha["success" == false] || captcha["score"] >= 0.3) {
-        if (data.username == req.session.username) {
-          res.jsonp({
-            SUCCESS: false,
-            CAPTCHAREQUEST: 0,
-            ERROR: `You can't delete yourself!`
-          });
-        } else {
-          authAPI.removeUser(data.username).then(state => {
-            if (state == "SUCCESS") {
-              res.jsonp({ SUCCESS: true, CAPTCHAREQUEST: 0 });
-            } else {
-              res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 0, ERROR: state });
-            }
-          });
-        }
+      if (data.username == req.session.username) {
+        res.jsonp({
+          SUCCESS: false,
+          CAPTCHAREQUEST: 0,
+          ERROR: `You can't delete yourself!`
+        });
       } else {
-        res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 1 });
+        authAPI.removeUser(data.username).then(state => {
+          if (state == "SUCCESS") {
+            res.jsonp({ SUCCESS: true, CAPTCHAREQUEST: 0 });
+          } else {
+            res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 0, ERROR: state });
+          }
+        });
       }
+    } else {
+      res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 1 });
+    }
+  } else {
+    res.jsonp({ ERROR: "401 Unauthorised." });
+  }
+});
+
+router.post("/api/resetPassword", async function(req, res) {
+  if (req.session.loggedIn) {
+    let data = req.body;
+    let captcha = await recapchaVerify(
+      process.env.CAPTCHA3_SECRETKEY,
+      data.captcha_token
+    );
+    if (captcha["success" == false] || captcha["score"] >= 0.3) {
+      authAPI.resetPassword(data.username,data.password).then(state => {
+        if (state == "SUCCESS") {
+          res.jsonp({ SUCCESS: true, CAPTCHAREQUEST: 0 });
+        } else {
+          res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 0, ERROR: state });
+        }
+      });
+    }else{
+      res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 1 });
     }
   } else {
     res.jsonp({ ERROR: "401 Unauthorised." });
