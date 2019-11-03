@@ -40,8 +40,8 @@
     "winston-raven-sentry": "^2.0.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.1",
-    "@types/node": "^12.11.7",
+    "@types/express": "^4.17.2",
+    "@types/node": "^12.12.5",
     "babel-cli": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
