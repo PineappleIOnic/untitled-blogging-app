@@ -95,8 +95,7 @@ var removeUser = function(username) {
 
 var createUser = function(username, password) {
   return argon2Hash(password).then(async function(hash) {
-    let ok = await pushUser(username, hash);
-    return ok;
+    return await pushUser(username, hash);
   });
 };
 
@@ -120,10 +119,23 @@ var authenticateUser = function(username, password) {
   }
 };
 
+function resetPassword(username, password) {
+  return argon2Hash(password).then(async function(hash) {
+    return getUserdata(username).then(user => {
+      if (!user["ERR"]) {
+        console.log(user)
+      } else {
+        return user["ERR"]
+      }
+    });
+  });
+}
+
 module.exports = {
   authenticateUser,
   createUser,
   getUserdata,
   getAllUsers,
-  removeUser
+  removeUser,
+  resetPassword
 };
