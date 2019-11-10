@@ -33,7 +33,7 @@
     "markdown-it": "^10.0.0",
     "node-fetch": "^2.6.0",
     "nodemon": "^1.19.4",
-    "pg-promise": "^9.3.3",
+    "pg-promise": "^10.0.0",
     "readline-sync": "^1.4.10",
     "redis": "^2.8.0",
     "winston": "^3.2.1",
