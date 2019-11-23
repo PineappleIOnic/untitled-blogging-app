@@ -22,7 +22,7 @@ let argon2Hash = async function(password) {
 };
 
 setInterval(async function() {
-  users = await db.any("SELECT * FROM likeminds.user_data");
+  users = await db.any("SELECT * FROM blog.user_data");
 }, 10);
 
 var getAllUsers = function() {
@@ -54,7 +54,7 @@ var updateUserVar = async function(username, nameofvar, value) {
     wantedData[nameofvar] = value;
     return db // This is such an bad thing to do, ngl. if updateuservar get's hijacked we're fucked.
       .none(
-        `UPDATE likeminds.user_data SET ${nameofvar} = $2 WHERE username = $1;`,
+        `UPDATE blog.user_data SET ${nameofvar} = $2 WHERE username = $1;`,
         [username, value]
       )
       .then(() => {
@@ -82,7 +82,7 @@ var addPPicture = function(username, url) {
   if (wantedData) {
     return db
       .none(
-        "UPDATE likeminds.user_data SET (username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8)",
+        "UPDATE blog.user_data SET (username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8)",
         [url]
       )
       .then(() => {
@@ -118,7 +118,7 @@ let pushUser = function(
       1}/${currentDate.getFullYear()}`;
     return db
       .none(
-        "INSERT INTO likeminds.user_data(id, username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+        "INSERT INTO blog.user_data(id, username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
         [
           id,
           username,
@@ -148,7 +148,7 @@ var removeUser = function(username) {
   return getUserdata(username).then(user => {
     if (user["username"]) {
       return db
-        .none("DELETE FROM likeminds.user_data WHERE username = $1", [username])
+        .none("DELETE FROM blog.user_data WHERE username = $1", [username])
         .then(() => {
           return "SUCCESS";
         })
@@ -176,7 +176,7 @@ var authenticateUser = function(username, password) {
   } else {
     return db
       .oneOrNone(
-        "SELECT * FROM likeminds.user_data WHERE username = $1",
+        "SELECT * FROM blog.user_data WHERE username = $1",
         username
       )
       .then(async function(querry) {
@@ -199,11 +199,11 @@ function resetPassword(username, password) {
     console.log("chad");
     if (!user["ERR"]) {
       return db
-        .none("DELETE FROM likeminds.user_data WHERE username = $1", [username])
+        .none("DELETE FROM blog.user_data WHERE username = $1", [username])
         .then(() => {
           return db
             .none(
-              "INSERT INTO likeminds.user_data(id, username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+              "INSERT INTO blog.user_data(id, username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
               [
                 user.id,
                 user.username,
