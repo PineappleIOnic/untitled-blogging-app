@@ -5,7 +5,7 @@
   "main": "src/app.js",
   "scripts": {
     "setup": "npm run build && node dist/connections/init_app.js",
-    "build": "babel ./src/ --out-dir dist/ --ignore ./node_modules",
+    "build": "npx babel ./src/ --out-dir dist/ --ignore ./node_modules",
     "start": "npm run build && node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,10 +21,12 @@
   },
   "homepage": "https://github.com/PineappleIOnic/untitled-blogging-app#readme",
   "dependencies": {
+    "@babel/polyfill": "^7.7.0",
     "@sentry/node": "^5.9.0",
-    "argon2": "^0.25.0",
+    "argon2": "^0.25.1",
     "colors": "^1.4.0",
     "connect-redis": "^4.0.3",
+    "core-js": "^3.4.2",
     "dotenv": "^8.2.0",
     "ejs": "^2.7.4",
     "express": "^4.17.1",
@@ -36,18 +38,16 @@
     "pg-promise": "^10.0.0",
     "readline-sync": "^1.4.10",
     "redis": "^2.8.0",
-    "winston": "^3.2.1",
-    "winston-raven-sentry": "^2.0.0"
+    "winston": "^3.2.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
     "@types/express": "^4.17.2",
     "@types/node": "^12.12.12",
-    "babel-cli": "^6.26.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
     "eslint": "^6.7.0",
-    "rimraf": "^3.0.0",
-    "tslint": "^5.20.1",
-    "typescript": "^3.7.2"
+    "node-gyp": "^6.0.1",
+    "rimraf": "^3.0.0"
   }
 }
