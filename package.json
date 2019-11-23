@@ -34,7 +34,7 @@
     "helmet": "^3.21.2",
     "markdown-it": "^10.0.0",
     "node-fetch": "^2.6.0",
-    "nodemon": "^1.19.4",
+    "nodemon": "^2.0.0",
     "pg-promise": "^10.0.0",
     "readline-sync": "^1.4.10",
     "redis": "^2.8.0",
