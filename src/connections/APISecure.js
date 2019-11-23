@@ -154,5 +154,16 @@ var blacklist = function(req, res, next) {
   }
 };
 
+// Force-HTTPS
+// Only Enable for Heroku!
 
-module.exports = { ratelimit, requestLogger, blacklist };
+var forceHTTPS = function(req, res, next) {
+  if (config.forceHTTPS["enabled"] == true) {
+    if (req.headers["x-forwarded-proto"] !== "https") {
+      return res.redirect(["https://", req.get("Host"), req.url].join(""));
+    }
+    return next();
+  }
+};
+
+module.exports = { ratelimit, requestLogger, blacklist, forceHTTPS };

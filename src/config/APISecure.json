@@ -15,5 +15,8 @@
         "concurrentRequests": 3
       }
     }
+  },
+  "forceHTTPS": {
+    "enabled":true
   }
 }
