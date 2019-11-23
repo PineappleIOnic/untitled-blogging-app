@@ -163,6 +163,8 @@ var forceHTTPS = function(req, res, next) {
       return res.redirect(["https://", req.get("Host"), req.url].join(""));
     }
     return next();
+  } else {
+    return next();
   }
 };
 
