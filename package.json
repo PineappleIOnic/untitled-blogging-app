@@ -5,7 +5,7 @@
   "main": "src/app.js",
   "scripts": {
     "setup": "npm run build && node dist/connections/init_app.js",
-    "build": "npx babel ./src/ --out-dir dist/ --ignore ./node_modules",
+    "build": "./node_modules/.bin/babel ./src/ --out-dir dist/ --ignore ./node_modules",
     "start": "npm run build && node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -45,6 +45,7 @@
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
+    "@babel/register": "^7.7.4",
     "@types/express": "^4.17.2",
     "@types/node": "^12.12.12",
     "eslint": "^6.7.0",

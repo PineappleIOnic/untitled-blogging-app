@@ -1,7 +1,4 @@
 /* eslint-disable no-undef */
-require("babel-core/register");
-require("babel-polyfill");
-
 const express = require("express")
 // Dotenv to correctly handle .env
 require("dotenv").config()
