@@ -45,14 +45,13 @@
             <p class="card-info">
                 <i class="far fa-calendar-alt"></i> <%= posts[i].date_create %> - <i class="far fa-user"></i> <%= posts[i].author %>
             </p>
-            <h4 class="card-title"><%= posts[i].title %></h4>
+            <a href="/blog/post/<%= posts[i].title %>"><h4 class="card-title"><%= posts[i].title %></h4></a>
             <p class="card-text">
               <%= (posts[i].actualpost).substring(0, 300) %>...
             </p>
             <a
-              href="#"
+              href="/blog/post/<%= posts[i].title %>"
               class="btn btn-secondary"
-              onclick="location.href = `/blog/post/<%= posts[i].title %>`"
               style="float:right;"
               >Read More</a
             >
