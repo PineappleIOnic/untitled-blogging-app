@@ -18,7 +18,7 @@ let titleCollision = function(title) {
   return isCollision;
 };
 
-let getBlogPost = async function(title) {
+let getBlogPost = function(title) {
   let postWanted = null;
   blogData.forEach(element => {
     if (element["title"] == title) {
@@ -52,9 +52,10 @@ let deletePost = async function(title) {
 };
 
 let createPost = async function(username, title, actualPost, edit) {
-  var currentDate = new Date();
-  var formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() +
+  let currentDate = new Date();
+  let formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() +
     1}/${currentDate.getFullYear()}`;
+  let oldData = getBlogPost(title);
   if (edit) {
     return db
       .none("DELETE FROM blog.posts WHERE title = $1", [title])
@@ -62,7 +63,7 @@ let createPost = async function(username, title, actualPost, edit) {
         return db
           .none(
             "INSERT INTO blog.posts(author, title, date_create, actualpost, views) VALUES($1, $2, $3, $4, $5)",
-            [username, title, formattedDate, actualPost, 0]
+            [oldData['author'], oldData['title'], oldData['date_create'], actualPost, 0]
           )
           .then(() => {
             return "POSTED";
@@ -87,8 +88,8 @@ let createPost = async function(username, title, actualPost, edit) {
       getAllPosts();
       return db
         .none(
-          "INSERT INTO blog.posts(author, title, date_create, actualpost) VALUES($1, $2, $3, $4)",
-          [username, title, formattedDate, actualPost]
+          "INSERT INTO blog.posts(author, title, date_create, actualpost) VALUES($1, $2, $3, $4, $5)",
+          [username, title, formattedDate, actualPost, 0]
         )
         .then(() => {
           return "POSTED";
