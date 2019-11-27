@@ -1,6 +1,4 @@
 /* eslint-disable no-undef */
-require("babel-core/register");
-require("babel-polyfill");
 
 try {
     require("dotenv").config()
@@ -66,20 +64,29 @@ try {
                 AUTHORIZATION ${process.env.DB_USER};
             CREATE TABLE blog.user_data
         (
-            username character varying COLLATE pg_catalog."default",
+            id character varying COLLATE pg_catalog."default",
+            username character varying COLLATE pg_catalog."default", 
             password character varying COLLATE pg_catalog."default",
-            date_created character varying COLLATE pg_catalog."default"
+            date_created character varying COLLATE pg_catalog."default",
+            email character varying COLLATE pg_catalog."default",
+            dob character varying COLLATE pg_catalog."default",
+            twofactor character varying COLLATE pg_catalog."default",
+            profilepicture character varying COLLATE pg_catalog."default",
+            coverpicture character varying COLLATE pg_catalog."default"
         )
         TABLESPACE pg_default;
 
-            CREATE TABLE blog.posts
+        CREATE TABLE blog.posts
         (
             author character varying COLLATE pg_catalog."default",
             title character varying COLLATE pg_catalog."default",
             date_create character varying COLLATE pg_catalog."default",
-            actualpost character varying COLLATE pg_catalog."default"
+            actualpost character varying COLLATE pg_catalog."default",
+            views int4,
+            comments text[][]
         )
         TABLESPACE pg_default;
+
 
         ALTER TABLE blog.user_data
         OWNER to ${process.env.DB_USER};

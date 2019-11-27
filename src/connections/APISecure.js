@@ -5,8 +5,12 @@ const fs = require("fs");
 const logger = require(__dirname + "/../../src/connections/logger.js");
 require("colors");
 
+var useragent = require('useragent');
+
 var requests = [];
 var beingAttacked = false;
+
+var botAgentList = ["Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou"];
 
 // APISecure's Config Loader:
 let config = JSON.parse(
@@ -168,4 +172,15 @@ var forceHTTPS = function(req, res, next) {
   }
 };
 
-module.exports = { ratelimit, requestLogger, blacklist, forceHTTPS };
+// Crawlbot Detector
+var crawlDetect = function(req, res, next) {
+  let agent = useragent.parse(req.headers['user-agent'])
+  if(botAgentList.includes(agent.family)) {
+    logger.log({
+      level: "warn",
+      message: `Bot just crawled site! Bot-agent: ${req.headers['user-agent']}, Family: ${agent.family}, Page: ${req.path}`});
+  }
+  next();
+}
+
+module.exports = { ratelimit, requestLogger, blacklist, forceHTTPS , crawlDetect};

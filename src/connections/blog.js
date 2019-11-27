@@ -37,16 +37,18 @@ let getAllPosts = function() {
 };
 
 let deletePost = async function(title) {
-  return db.none("DELETE FROM blog.posts WHERE title = $1", [title]).then(() => {
-    return 'DELETED';
-  })
-  .catch(error => {
-    logger.log({
-      level: "error",
-      message: `[Blog API] ${error}`
+  return db
+    .none("DELETE FROM blog.posts WHERE title = $1", [title])
+    .then(() => {
+      return "DELETED";
+    })
+    .catch(error => {
+      logger.log({
+        level: "error",
+        message: `[Blog API] ${error}`
+      });
+      return { err: error };
     });
-    return { err: error };
-  });
 };
 
 let createPost = async function(username, title, actualPost, edit) {
@@ -59,8 +61,8 @@ let createPost = async function(username, title, actualPost, edit) {
       .then(() => {
         return db
           .none(
-            "INSERT INTO blog.posts(author, title, date_create, actualpost) VALUES($1, $2, $3, $4)",
-            [username, title, formattedDate, actualPost]
+            "INSERT INTO blog.posts(author, title, date_create, actualpost, views) VALUES($1, $2, $3, $4, $5)",
+            [username, title, formattedDate, actualPost, 0]
           )
           .then(() => {
             return "POSTED";
@@ -104,4 +106,9 @@ let createPost = async function(username, title, actualPost, edit) {
   }
 };
 
-module.exports = { createPost, getBlogPost, getAllPosts, deletePost};
+let addView = async function(title) {
+  console.log(title)
+  return db.none("UPDATE blog.posts SET views = views + 1 WHERE title = $1", [title]);
+};
+
+module.exports = { createPost, getBlogPost, getAllPosts, deletePost, addView };

@@ -6,7 +6,8 @@
   "scripts": {
     "setup": "npm run build && node dist/connections/init_app.js",
     "build": "./node_modules/.bin/babel ./src/ --out-dir dist/ --ignore ./node_modules",
-    "start": "npm run build && node dist/app.js",
+    "dev": "npm run build && node dist/app.js",
+    "start": "node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -39,6 +40,7 @@
     "pg-promise": "^10.0.0",
     "readline-sync": "^1.4.10",
     "redis": "^2.8.0",
+    "useragent": "^2.3.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {

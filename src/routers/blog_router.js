@@ -26,6 +26,7 @@ router.get('/post/:postTitle', async function (req, res) {
     if (!blogWanted['ERR']) {
         let blogContent = md.render(blogWanted.actualpost);
         res.render('../src/views/blogPost_view.ejs', {data:blogWanted, blogContent:blogContent, SITEKEY : process.env.CAPTCHA3_SITEKEY})
+        blogAPI.addView(req.params['postTitle'])
     } else {
         res.render('../src/views/error_view.ejs', {error_code:404, SITEKEY : process.env.CAPTCHA3_SITEKEY})
     }

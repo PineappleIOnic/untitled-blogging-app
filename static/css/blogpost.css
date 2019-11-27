@@ -62,3 +62,7 @@ img {
 .backButton i {
     font-size: 50px;
 }
+
+.blogViewCount {
+    float: right;
+}
