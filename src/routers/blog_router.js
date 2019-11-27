@@ -28,7 +28,7 @@ router.get('/post/:postTitle', async function (req, res) {
         res.render('../src/views/blogPost_view.ejs', {data:blogWanted, blogContent:blogContent, SITEKEY : process.env.CAPTCHA3_SITEKEY})
         blogAPI.addView(req.params['postTitle'])
     } else {
-        res.render('../src/views/error_view.ejs', {error_code:404, SITEKEY : process.env.CAPTCHA3_SITEKEY})
+        res.status(404).render('../src/views/error_view.ejs', {error_code:404, SITEKEY : process.env.CAPTCHA3_SITEKEY})
     }
 })
 
@@ -100,7 +100,7 @@ router.post('/api/createPost', async function (req, res) {
 
 router.get('/postEditor/:post', async function (req, res) {
     if ((req.session.loggedIn == false) || (req.session.loggedIn == null)) {
-        res.render('../src/views/error_view.ejs', {error_code:401, SITEKEY : process.env.CAPTCHA3_SITEKEY})
+        res.status(404).render('../src/views/error_view.ejs', {error_code:401, SITEKEY : process.env.CAPTCHA3_SITEKEY})
     } else {
         let blogWanted = await blogAPI.getBlogPost(req.params['post'])
         let isEditing = (!(blogWanted.ERR == 'postNotFound'))
@@ -110,7 +110,7 @@ router.get('/postEditor/:post', async function (req, res) {
 
 router.get('/postEditor/', async function (req, res) {
     if ((req.session.loggedIn == false) || (req.session.loggedIn == null)) {
-        res.render('../src/views/error_view.ejs', {error_code:401, SITEKEY : process.env.CAPTCHA3_SITEKEY})
+        res.status(404).render('../src/views/error_view.ejs', {error_code:401, SITEKEY : process.env.CAPTCHA3_SITEKEY})
     } else {
         let blogWanted = await blogAPI.getBlogPost(req.params['post'])
         let isEditing = (!(blogWanted.ERR == 'postNotFound'))
