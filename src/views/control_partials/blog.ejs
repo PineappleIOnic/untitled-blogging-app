@@ -1,0 +1,29 @@
+<div id="blogPage" hidden>
+    <div class="card" style="height: 95%; width: 100%; padding-bottom: 20px;">
+      <div class="card-body">
+        <h3>Blog Posts</h3>
+        <% for(var i=0; i < posts.length; i++) { %>
+        <div class="card" id='post-<%=i%>'>
+          <div class="card-body">
+            <%= posts[i].title %>
+            <button type="button" class="btn btn-danger" style='float: right;' id='deleteButton-<%=i%>'
+              onclick='deletePost(`<%=posts[i].title%>`,<%=i%>)'>Delete</button>
+            <button type="button" class="btn btn-secondary" data-post='<%=posts[i].title%>' data-toggle="modal"
+              data-target="#postCreateModal" style='float: right; margin-right: 10px;'>Edit</button>
+            <button type="button" class="btn btn-primary" style='float: right; margin-right: 10px;'
+              onclick='location.href = `/blog/post/<%=posts[i].title%>`'>View Post</button>
+          </div>
+        </div>
+        <% } %>
+        <button class="btn btn-secondary" style="float: right;" data-toggle="modal"
+          data-target="#postCreateModal">Create New</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="postCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document" style='width: 90%; max-width: none; height: 90%; max-height: none;'>
+      <div class="modal-content" style="height: 100%">
+        <iframe src="/blog/postEditor/" id='postEditor' frameborder="0" style='height: 100%; width: 100%'></iframe>
+      </div>
+    </div>

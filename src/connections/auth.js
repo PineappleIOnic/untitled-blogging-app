@@ -1,12 +1,13 @@
 /* eslint-disable no-undef */
 
-// Auth.JS Revision 1.5
+// Auth.JS Revision 1.7
 // Written by IOnicisere, under the MIT Licence.
 
 const db = require(__dirname + "/DB.js").db;
 const logger = require(__dirname + "/logger.js");
 const argon2 = require("argon2");
-const nanoid = require('nanoid');
+const nanoid = require("nanoid");
+const speakeasy = require("speakeasy");
 
 var users = null;
 
@@ -175,10 +176,7 @@ var authenticateUser = function(username, password) {
     return "invld_usrnme";
   } else {
     return db
-      .oneOrNone(
-        "SELECT * FROM blog.user_data WHERE username = $1",
-        username
-      )
+      .oneOrNone("SELECT * FROM blog.user_data WHERE username = $1", username)
       .then(async function(querry) {
         if (querry) {
           if (await argon2.verify(querry.password, password)) {
@@ -244,7 +242,12 @@ var userFromId = function(ID) {
   let wantedData;
   users.forEach(element => {
     if (element["id"] == ID) {
-      wantedData = {'username':element['username'], 'Date Created':element['date_created'], 'Profile Picture':element['profilepicture'], 'Cover Picture':element['coverpicture']}
+      wantedData = {
+        username: element["username"],
+        "Date Created": element["date_created"],
+        "Profile Picture": element["profilepicture"],
+        "Cover Picture": element["coverpicture"]
+      };
     }
   });
   if (wantedData) {
@@ -252,7 +255,27 @@ var userFromId = function(ID) {
   } else {
     return { ERR: "NO_USER_EXIST" };
   }
-}
+};
+
+var generate2FA = function() {
+  return speakeasy.generateSecret({ length: 20 }).base32;
+};
+
+var append2FA = async function(user, secret) {
+  return await updateUserVar(user, "twofactor", secret);
+};
+
+var verify2FA = function(attempt, user, secret) {
+  if (user) {
+    secret = getUserdata(user)["twofactor"];
+  }
+  return speakeasy.totp.verify({
+    secret: secret,
+    encoding: "base32",
+    token: attempt,
+    window: 10
+  });
+};
 
 module.exports = {
   authenticateUser,
@@ -263,5 +286,8 @@ module.exports = {
   removeUser,
   resetPassword,
   addPPicture,
-  updateUserVar
+  updateUserVar,
+  generate2FA,
+  append2FA,
+  verify2FA
 };
