@@ -1,0 +1,122 @@
+<div id="userPage" hidden>
+    <div class="row" style="height: 50%;">
+      <div class="col">
+        <div class="card" style="height: 95%; padding-bottom: 20px;">
+          <div class="card-body">
+            <h3>Create User</h3>
+            <p>Warning! Any users created here will have full access to all API's including delete users.</p>
+            <div id="createAlerts"></div>
+            <form id="adminCreateUser">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$" class="form-control"
+                  id="CreateUsername" placeholder="Enter Username">
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="CreatePassword" placeholder="Enter Password">
+              </div>
+              <button type="submit" id="CreateUserButton" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card" style="height: 95%;">
+          <div class="card-body">
+            <h3>Manage Users</h3>
+            <div class="userList" id="userList" style="overflow-y: scroll; height: 300px;">
+              <% for(var i=0; i < users.length; i++) { %>
+              <div class="card" style="width: 98%; margin: auto;" id="manage-<%= users[i].username %>">
+                <div class="card-body">
+                  <%= users[i].username %>
+                  <button type="button" class="btn btn-secondary" style="float: right;" data-toggle="modal"
+                    data-target="#userConfigModal" data-username="<%= users[i].username %>"
+                    data-datecreated="<%= users[i].date_created %>">Manage User</button>
+                </div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="height: 50%;">
+      <div class="col">
+        <div class="card" style="height: 95%; padding-bottom: 20px;">
+            <div class="card-body">
+              <h3>2FA</h3>
+              <div id="createAlerts"></div>
+              <button type="submit" id="Generate2FA" class="btn btn-primary" style="float: right" onclick="generate2FA()">Generate 2FA QRCode</button>
+              <div class="2FA_QR" style="height: 300px; width: 300px; margin: auto;">
+              <img id="2FAImg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" style="height: 100%; width: 100%"></img>  
+              </div>
+              <div id="2FAButtonContainer">
+                <button type="submit" id="Set2FA" class="btn btn-secondary" style="float: right; display: none;" onclick="save2FA()">Update 2FA</button>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="col">
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="userConfigModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Managing User: </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="userConfigBody">
+          <div id="userConfigAlerts"></div>
+          <div class="userAbout d-flex" style="float: left;">
+            <div class="userImage">
+              <img src="/cdn/img/default.png" style="height: 100px; width:100px; border-radius:50%;">
+            </div>
+            <div class="userInfo" style="height: 100px;line-height: 100px;">
+              <p id="configUserAbout"
+                style="margin-bottom: 0px;display: inline-block;vertical-align: middle;line-height: normal; margin-left: 10px;">
+                User: error</p>
+            </div>
+          </div>
+          <div class="userControls" style='position: relative; height: 100%'>
+            <button type="button" class="btn btn-danger" style="position:absolute; right: 1px;">Delete User</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="passwordChangeModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Changing Password for user: </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="passwordChangeBody">
+          <div id='passwordChangeAlerts'></div>
+            <form id='passwordChangeForm'>
+                <div class="form-group">
+                  <label for="passwordChange">Password</label>
+                  <input type="password" class="form-control" id="passwordChange" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                  <label for="passwordChangeConfirm">Confirm Password</label>
+                  <input type="password" class="form-control" id="passwordChangeConfirm" placeholder="Confirm Password" required>
+                </div>
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>

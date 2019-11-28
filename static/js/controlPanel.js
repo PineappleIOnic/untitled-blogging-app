@@ -43,9 +43,7 @@ $("#adminCreateUser").on("submit", async function(event) {
               createNewNode($("#CreateUsername").val());
             } else {
               $("#createAlerts").html(
-                `<div class="alert alert-danger" role="alert">Error: ${
-                  jsonResponse["ERROR"]
-                }</div>`
+                `<div class="alert alert-danger" role="alert">Error: ${jsonResponse["ERROR"]}</div>`
               );
             }
           } else {
@@ -122,9 +120,7 @@ let deleteUser = function(username) {
             );
           } else {
             $("#userConfigAlerts").html(
-              `<div class="alert alert-danger" role="alert">Error: ${
-                jsonResponse["ERROR"]
-              }</div>`
+              `<div class="alert alert-danger" role="alert">Error: ${jsonResponse["ERROR"]}</div>`
             );
             buttonwanted.find("button").prop("disabled", false);
             buttonwanted.find("button").html(`Delete User`);
@@ -143,12 +139,13 @@ $("#passwordChangeModal").on("show.bs.modal", function() {
   $("#userConfigModal").modal("hide");
 });
 
-$( "#passwordChangeForm" ).submit(function( event ) {
+$("#passwordChangeForm").submit(function(event) {
   if ($("#passwordChange").val() == $("#passwordChangeConfirm").val()) {
-    console.log($("#passwordChange").val())
+    console.log($("#passwordChange").val());
   } else {
-    $("#passwordChangeAlerts")
-      .html(`<div class="alert alert-danger" role="alert"> The Passwords do not match. </div>`);
+    $("#passwordChangeAlerts").html(
+      `<div class="alert alert-danger" role="alert"> The Passwords do not match. </div>`
+    );
   }
   event.preventDefault();
 });
@@ -230,6 +227,97 @@ let deletePost = function(title, elementId) {
             );
           }
         }
+      });
+  } catch (err) {
+    console.log(`ERROR:  ${err}`);
+  }
+};
+
+var currentSecret = "";
+
+let generate2FA = function() {
+  $("#Generate2FA").prop("disabled", true);
+  $("#Generate2FA").html(
+    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span> Generating 2FA...`
+  );
+
+  try {
+    grecaptcha
+      .execute(CAPTCHASITE, {
+        action: "generateCaptcha"
+      })
+      .then(async function(token) {
+        let response = await fetch("/auth/api/generate2FA/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+        let jsonResponse = await response.json();
+        if (jsonResponse["SUCCESS"] == true) {
+          currentSecret = jsonResponse["DATA"];
+          let opts = {
+            errorCorrectionLevel: "H",
+            type: "image/webp",
+            quality: 1,
+            margin: 1,
+            color: {
+              dark: "#000",
+              light: "#FFF"
+            }
+          };
+          QRCode.toDataURL(jsonResponse["DATA"], opts, function(err, url) {
+            if (err) throw err;
+            $("#2FAImg").attr("src", url);
+          });
+          $("#Set2FA").show();
+        }
+        $("#Generate2FA").prop("disabled", false);
+        $("#Generate2FA").html(`Generate 2FA QRCode`);
+      });
+  } catch (err) {
+    console.log(`ERROR:  ${err}`);
+    $("#Generate2FA").prop("disabled", false);
+    $("#Generate2FA").html(`Generate 2FA QRCode`);
+  }
+};
+
+let save2FA = function() {
+  $("#Set2FA").prop("disabled", true);
+  $("#Set2FA").html(
+    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span> Setting 2FA...`
+  );
+
+  try {
+    grecaptcha
+      .execute(CAPTCHASITE, {
+        action: "setCaptcha"
+      })
+      .then(async function(token) {
+        let response = await fetch("/auth/api/push2FA/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ secret: currentSecret, captcha_token: token })
+        });
+        let jsonResponse = await response.json();
+        if (jsonResponse["SUCCESS"] == true) {
+          $("#2FAButtonContainer").html(
+            `<button type="submit" id="Set2FA" class="btn btn-success" style="float: right;">Success!</button>`
+          );
+        } else {
+          $("#2FAButtonContainer").html(
+            `<button type="submit" id="Set2FA" class="btn btn-danger" style="float: right;">Error!</button>`
+          );
+        }
+        setTimeout(function() {
+          $("#Set2FA").html(
+            `<button type="submit" id="Set2FA" class="btn btn-secondary" style="float: right; display: none;" onclick="save2FA()">Update 2FA</button>`
+          );
+          $("#Set2FA").hide();
+          $("#Set2FA").prop("disabled", false);
+        }, 2000);
       });
   } catch (err) {
     console.log(`ERROR:  ${err}`);
