@@ -258,7 +258,8 @@ var userFromId = function(ID) {
 };
 
 var generate2FA = function() {
-  return speakeasy.generateSecret({ length: 20 }).base32;
+  let data = speakeasy.generateSecret({ length: 20 })
+  return ({base32:data.base32, url : speakeasy.otpauthURL({secret:data.base32, label: `IOnic's Blog`, encoding:'base32'})});
 };
 
 var append2FA = async function(user, secret) {

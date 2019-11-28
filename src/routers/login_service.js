@@ -141,11 +141,13 @@ router.post("/api/resetPassword", async function(req, res) {
 
 // Implement Captcha for these two
 router.post("/api/generate2FA", async function(req, res) {
+  let data = authAPI.generate2FA()
   if (req.session.loggedIn) {
     res.jsonp({
       SUCCESS: true,
       CAPTCHAREQUEST: 0,
-      DATA: authAPI.generate2FA()
+      DATA: data.base32,
+      URL: data.url
     });
   } else {
     res.status(401).jsonp({ ERROR: "401 Unauthorised" });
