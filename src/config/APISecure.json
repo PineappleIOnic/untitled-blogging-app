@@ -17,6 +17,6 @@
     }
   },
   "forceHTTPS": {
-    "enabled":false
+    "enabled":true
   }
 }
