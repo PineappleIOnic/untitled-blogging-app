@@ -266,7 +266,7 @@ let generate2FA = function() {
               light: "#FFF"
             }
           };
-          QRCode.toDataURL(jsonResponse["DATA"], opts, function(err, url) {
+          QRCode.toDataURL(jsonResponse["URL"], opts, function(err, url) {
             if (err) throw err;
             $("#2FAImg").attr("src", url);
           });
