@@ -53,6 +53,8 @@ router.post("/api/login", async function(req, res) {
 });
 
 router.post("/api/createUser", async function(req, res) {
+  let data = req.body;
+  
   if (req.session.loggedIn != true) {
     res.status(401).jsonp({ ERROR: "401 Unauthorised" });
     return;
@@ -73,6 +75,8 @@ router.post("/api/createUser", async function(req, res) {
 });
 
 router.post("/api/deleteUser", async function(req, res) {
+  let data = req.body;
+
   if (req.session.loggedIn != true) {
     res.status(401).jsonp({ ERROR: "401 Unauthorised" });
     return;
@@ -102,6 +106,8 @@ router.post("/api/deleteUser", async function(req, res) {
 });
 
 router.post("/api/resetPassword", async function(req, res) {
+  let data = req.body;
+
   if (req.session.loggedIn != true) {
     res.status(401).jsonp({ ERROR: "401 Unauthorised" });
     return;
