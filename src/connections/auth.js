@@ -158,7 +158,7 @@ let pushUser = function (
 };
 
 var removeUser = function (username) {
-  user = getUserdata(username)
+  let user = getUserdata(username)
   if (user["username"]) {
     return db
       .none("DELETE FROM blog.user_data WHERE username = $1", [username])
