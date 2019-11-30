@@ -125,12 +125,12 @@ let deleteUser = function(username) {
             );
             buttonwanted.find("button").prop("disabled", false);
             buttonwanted.find("button").html(`Delete User`);
-            setTimeout(function() {
-              $("#userConfigAlerts").html(
-                ``
-              );
-            }, 2000);
           }
+          setTimeout(function() {
+            $("#userConfigAlerts").html(
+              ``
+            );
+          }, 2000);
         }
       });
   } catch (err) {
