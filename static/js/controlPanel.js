@@ -113,6 +113,7 @@ let deleteUser = function(username) {
           $("#userConfigModal").modal("toggle");
           buttonwanted.find("button").prop("disabled", false);
           buttonwanted.find("button").html(`Delete User`);
+
         } else {
           if (jsonResponse["CAPTCHAREQUEST"] == 1) {
             $("#userConfigBody").html(
@@ -124,6 +125,11 @@ let deleteUser = function(username) {
             );
             buttonwanted.find("button").prop("disabled", false);
             buttonwanted.find("button").html(`Delete User`);
+            setTimeout(function() {
+              $("#userConfigAlerts").html(
+                ``
+              );
+            }, 2000);
           }
         }
       });
