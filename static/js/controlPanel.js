@@ -270,7 +270,7 @@ let generate2FA = function() {
             if (err) throw err;
             $("#2FAImg").attr("src", url);
           });
-          $("#Set2FA").show();
+          $("#2FAButtonContainer").show();
         }
         $("#Generate2FA").prop("disabled", false);
         $("#Generate2FA").html(`Generate 2FA QRCode`);
@@ -294,28 +294,38 @@ let save2FA = function() {
         action: "setCaptcha"
       })
       .then(async function(token) {
+        if (!$('#2FAVerify').val()) {
+          return;
+        }
+
         let response = await fetch("/auth/api/push2FA/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ secret: currentSecret, captcha_token: token })
+          body: JSON.stringify({ secret: currentSecret, captcha_token: token, attempt: $('#2FAVerify').val() })
         });
         let jsonResponse = await response.json();
         if (jsonResponse["SUCCESS"] == true) {
-          $("#2FAButtonContainer").html(
-            `<button type="submit" id="Set2FA" class="btn btn-success" style="float: right;">Success!</button>`
+          $('#Set2FA').attr('class', 'btn btn-success');
+          $("#Set2FA").html(
+            `Success!`
           );
+          setTimeout(function() {
+            $("#2FAButtonContainer").hide();
+          }, 2000);
+
         } else {
-          $("#2FAButtonContainer").html(
-            `<button type="submit" id="Set2FA" class="btn btn-danger" style="float: right;">Error!</button>`
+          $('#Set2FA').attr('class', 'btn btn-danger');
+          $("#Set2FA").html(
+            `Failed`
           );
         }
         setTimeout(function() {
+          $('#Set2FA').attr('class', 'btn btn-secondary');
           $("#Set2FA").html(
-            `<button type="submit" id="Set2FA" class="btn btn-secondary" style="float: right; display: none;" onclick="save2FA()">Update 2FA</button>`
+            `Update 2FA`
           );
-          $("#Set2FA").hide();
           $("#Set2FA").prop("disabled", false);
         }, 2000);
       });

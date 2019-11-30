@@ -48,11 +48,13 @@
               <h3>2FA</h3>
               <div id="createAlerts"></div>
               <button type="submit" id="Generate2FA" class="btn btn-primary" style="float: right" onclick="generate2FA()">Generate 2FA QRCode</button>
-              <div class="2FA_QR" style="height: 300px; width: 300px; margin: auto;">
+              <div class="2FA_QR" style="height: 300px; width: 300px; margin: auto; margin-bottom: 10px;">
               <img id="2FAImg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" style="height: 100%; width: 100%"></img>  
               </div>
-              <div id="2FAButtonContainer">
-                <button type="submit" id="Set2FA" class="btn btn-secondary" style="float: right; display: none;" onclick="save2FA()">Update 2FA</button>
+              <div id="2FAButtonContainer" class="form-inline" style='display: none;'>
+                <input class="form-control" id="2FAVerify" placeholder="2FA Code" style="width: 74%">
+                <div style="width: 1%"></div>
+                <button type="submit" id="Set2FA" class="btn btn-secondary" style="float: right; width: 25%" onclick="save2FA()">Update 2FA</button>
               </div>
             </div>
         </div>
