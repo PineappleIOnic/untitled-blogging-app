@@ -8,7 +8,7 @@ var md = require("markdown-it")();
 
 router.use(express.json());
 
-router.get("/post/:postTitle", async function(req, res) {
+router.get("/post/:postTitle", async function (req, res) {
   let blogWanted = blogAPI.getBlogPost(req.params["postTitle"]);
   if (!blogWanted["ERR"]) {
     let blogContent = md.render(blogWanted.actualpost);
@@ -26,23 +26,31 @@ router.get("/post/:postTitle", async function(req, res) {
   }
 });
 
-router.post("/api/deletePost", async function(req, res) {
+router.post("/api/deletePost", async function (req, res) {
   let data = req.body;
 
   if (req.session.loggedIn == false || req.session.loggedIn == null) {
-    res.status(401).jsonp({ ERR: "401 Unauthorised" });
+    res.status(401).jsonp({
+      ERR: "401 Unauthorised"
+    });
     return;
   }
 
   if (!captcha.verify(data.captcha_token)) {
-    res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 1 });
+    res.jsonp({
+      SUCCESS: false,
+      CAPTCHAREQUEST: 1
+    });
     return;
   }
 
   let expectedOptions = [data.title, data.captcha_token];
   for (var key in expectedOptions) {
     if (expectedOptions[key] == "" || !expectedOptions[key]) {
-      res.jsonp({ SUCCESS: false, ERROR: `Missing Data: ${key}` });
+      res.jsonp({
+        SUCCESS: false,
+        ERROR: `Missing Data: ${key}`
+      });
       return;
     }
   }
@@ -51,28 +59,50 @@ router.post("/api/deletePost", async function(req, res) {
     .deletePost(data.title)
     .then(state => {
       if (state == "DELETED") {
-        res.jsonp({ SUCCESS: true, CAPTCHAREQUEST: 0 });
+        res.jsonp({
+          SUCCESS: true,
+          CAPTCHAREQUEST: 0
+        });
       } else {
-        res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 0, ERR: state["err"] });
+        res.jsonp({
+          SUCCESS: false,
+          CAPTCHAREQUEST: 0,
+          ERR: state["err"]
+        });
       }
     })
     .catch(err => {
-      res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 0, ERR: err });
+      res.jsonp({
+        SUCCESS: false,
+        CAPTCHAREQUEST: 0,
+        ERR: err
+      });
     });
 });
 
-router.post("/api/createPost", async function(req, res) {
+router.post("/api/createPost", async function (req, res) {
+  let data = req.body;
+
   if (req.session.loggedIn == false || req.session.loggedIn == null) {
-    res.status(401).jsonp({ ERR: "401 Unauthorised" });
+    res.status(401).jsonp({
+      ERR: "401 Unauthorised"
+    });
     return;
   }
 
   if (!captcha.verify(data.captcha_token)) {
-    res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 1 });
+    res.jsonp({
+      SUCCESS: false,
+      CAPTCHAREQUEST: 1
+    });
     return;
   }
 
-  let data = req.body;
+  console.log('title: ' + data.title)
+  console.log('actualPost: ' + data.actualPost)
+  console.log('token: ' + data.captcha_token)
+  console.log('updatePost: ' + data.updatePost)
+
   let expectedOptions = [
     data.title,
     data.actualPost,
@@ -81,7 +111,10 @@ router.post("/api/createPost", async function(req, res) {
   ];
   for (var key in expectedOptions) {
     if (expectedOptions[key] == "" || !expectedOptions[key]) {
-      res.jsonp({ SUCCESS: false, ERROR: `Missing Data: ${key}` });
+      res.jsonp({
+        SUCCESS: false,
+        ERROR: `Missing Data: ${key}`
+      });
       return;
     }
   }
@@ -95,7 +128,10 @@ router.post("/api/createPost", async function(req, res) {
     )
     .then(state => {
       if (state == "POSTED") {
-        res.jsonp({ SUCCESS: true, CAPTCHAREQUEST: 0 });
+        res.jsonp({
+          SUCCESS: true,
+          CAPTCHAREQUEST: 0
+        });
       } else if (state == "TITLE_EXIST") {
         res.jsonp({
           SUCCESS: false,
@@ -111,11 +147,15 @@ router.post("/api/createPost", async function(req, res) {
       }
     })
     .catch(err => {
-      res.jsonp({ SUCCESS: false, CAPTCHAREQUEST: 0, ERR: err });
+      res.jsonp({
+        SUCCESS: false,
+        CAPTCHAREQUEST: 0,
+        ERR: err
+      });
     });
 });
 
-router.get("/postEditor/:post", async function(req, res) {
+router.get("/postEditor/:post", async function (req, res) {
   if (req.session.loggedIn == false || req.session.loggedIn == null) {
     res.status(401).render("../src/views/error_view.ejs", {
       error_code: 401,
@@ -133,7 +173,7 @@ router.get("/postEditor/:post", async function(req, res) {
   });
 });
 
-router.get("/postEditor/", async function(req, res) {
+router.get("/postEditor/", async function (req, res) {
   if (req.session.loggedIn == false || req.session.loggedIn == null) {
     res.status(401).render("../src/views/error_view.ejs", {
       error_code: 401,

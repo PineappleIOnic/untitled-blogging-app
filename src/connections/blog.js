@@ -56,7 +56,10 @@ let createPost = async function(username, title, actualPost, edit) {
   let formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() +
     1}/${currentDate.getFullYear()}`;
   let oldData = getBlogPost(title);
-  if (edit) {
+  if (edit != "false") {
+    if(oldData['ERR']) {
+      return {err: "Attmpting to edit a post that doesn't exist"};
+    }
     return db
       .none("DELETE FROM blog.posts WHERE title = $1", [title])
       .then(() => {
@@ -88,7 +91,7 @@ let createPost = async function(username, title, actualPost, edit) {
       getAllPosts();
       return db
         .none(
-          "INSERT INTO blog.posts(author, title, date_create, actualpost) VALUES($1, $2, $3, $4, $5)",
+          "INSERT INTO blog.posts(author, title, date_create, actualpost, views) VALUES($1, $2, $3, $4, $5)",
           [username, title, formattedDate, actualPost, 0]
         )
         .then(() => {
