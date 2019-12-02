@@ -11,13 +11,18 @@ var md = window.markdownit({
 
 var editorAlert = function(type, message) {
   if (type == "success") {
-    $("#updateButton").html(`<button type="button" class="btn btn-success" onclick=''><i class="fas fa-check"></i> Success</button>`);
+    $("#updateButton").attr("class", "btn btn-success");
+    $("#updateButton").attr("disabled", true);
+    $("#updateButton").html(`<i class="fas fa-check"></i> Success`);
   } else if (type == "danger") {
-    $("#updateButton").html(`<button type="button" class="btn btn-success" onclick=''><i class="fas fa-times"></i> Error</button>`);
+    $("#updateButton").attr("class", "btn btn-danger");
+    $("#updateButton").attr("disabled", true);
+    $("#updateButton").html(`<i class="fas fa-times"></i> Error`);
     console.log(`Error: ${message}`)
   }
     setTimeout(function(){
-      $("#updateButton").html(`<button type="button" id='updateButton' class="btn btn-secondary" onclick='updatePost("<%= data.title %>")'>Update post</button>`);
+      $("#updateButton").attr("class", "btn btn-secondary");
+      $("#updateButton").html(`Update post`);
       $("#submit").prop("disabled", false);
   }, 2000);
 };
