@@ -81,5 +81,9 @@ The blog will not send any data to sentry unless `NODE_ENV = production` within 
  - [ ] Add Profile Picture Uploading
  - [x] Add serverside API spam prevention
  - [ ] Add password bruteforce prevention
+ 
+ ## Credits
+ Liquid - Helped with testing
+ 
 ## Licence
 This entire thing is licenced under MIT (Not too sure about the modules), feel free to fork it and use it in your own project. If you love this, then feel free to credit me and add an link to my github.
