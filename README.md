@@ -2,19 +2,20 @@
 # An Untitled Blogging App
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/PineappleIOnic/untitled-blogging-app.svg)](https://greenkeeper.io/)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/027f3997d8dc4fd4a8d35dd1bc5583ca)](https://www.codacy.com/manual/PineappleIOnic/untitled-blogging-app?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PineappleIOnic/untitled-blogging-app&amp;utm_campaign=Badge_Grade)
 
 ## About
 I was bored one day, and needed to up my database and authentication skills, so I decided to make an simple blogging app, but didn't know what to call it hence the name "untitled blogging app", This uses postgreSQL as an database and redis as an caching server (Mainly used for sessions).
 
 It features the following
 
- - Salted Argon2 Password Hashes for storing user passwords
- - Uses express-sessions for keeping track of logins (No more storing API keys clientside)
-- Bootstrap Centered Design
-- An Admin Panel from [adminLTE](https://github.com/ColorlibHQ/AdminLTE)
-- Captcha V3 on all pages.
-- Sentry Intergration
-- Rate limiting support
+  - Salted Argon2 Password Hashes for storing user passwords
+  - Uses express-sessions for keeping track of logins (No more storing API keys clientside)
+  - Bootstrap Centered Design
+  - An Admin Panel from [adminLTE](https://github.com/ColorlibHQ/AdminLTE)
+  - Captcha V3 on all pages.
+  - Sentry Intergration
+  - Rate limiting support
 
 ## Setup
 Setup isn't too complicated, clone the repository with
