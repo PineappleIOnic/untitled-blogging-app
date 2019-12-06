@@ -1,10 +1,14 @@
 {
+    "plugins": [
+        "security"
+
+    ],
     "env": {
         "node": true,
         "commonjs": true,
         "es6": true
     },
-    "extends": "eslint:recommended",
+    "extends": ["eslint:recommended", "plugin:security/recommended"],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"

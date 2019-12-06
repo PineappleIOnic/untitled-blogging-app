@@ -9,19 +9,19 @@ var md = window.markdownit({
   html: true
 });
 
-$("#adminCreateUser").on("submit", async function(event) {
+$("#adminCreateUser").on("submit", async function (event) {
   event.preventDefault();
   $("#CreateUserButton").prop("disabled", true);
   $("#CreateUserButton").html(
     `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`
   );
   try {
-    grecaptcha.ready(function() {
+    grecaptcha.ready(function () {
       return grecaptcha
         .execute(CAPTCHASITE, {
           action: "adminCreateUser"
         })
-        .then(async function(token) {
+        .then(async function (token) {
           let data = {
             username: $("#CreateUsername").val(),
             password: $("#CreatePassword").val(),
@@ -60,7 +60,7 @@ $("#adminCreateUser").on("submit", async function(event) {
   }
 });
 
-$("#postCreateModal").on("show.bs.modal", function(event) {
+$("#postCreateModal").on("show.bs.modal", function (event) {
   let button = $(event.relatedTarget);
   let recipient = button.data("post");
   $("#postCreateModal").html(
@@ -68,7 +68,7 @@ $("#postCreateModal").on("show.bs.modal", function(event) {
   );
 });
 
-let createNewNode = function(username) {
+let createNewNode = function (username) {
   let currentDate = new Date();
   let formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() +
     1}/${currentDate.getFullYear()}`;
@@ -83,7 +83,7 @@ let createNewNode = function(username) {
 };
 
 // Delete user function
-let deleteUser = function(username) {
+let deleteUser = function (username) {
   let buttonwanted = $(".userControls");
   buttonwanted.find("button").prop("disabled", true);
   buttonwanted
@@ -96,13 +96,16 @@ let deleteUser = function(username) {
       .execute(CAPTCHASITE, {
         action: "adminRemoveUser"
       })
-      .then(async function(token) {
+      .then(async function (token) {
         let response = await fetch("/auth/api/deleteUser/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ username: username, captcha_token: token })
+          body: JSON.stringify({
+            username: username,
+            captcha_token: token
+          })
         });
         let jsonResponse = await response.json();
         if (jsonResponse["SUCCESS"] == true) {
@@ -113,6 +116,7 @@ let deleteUser = function(username) {
           $("#userConfigModal").modal("toggle");
           buttonwanted.find("button").prop("disabled", false);
           buttonwanted.find("button").html(`Delete User`);
+
         } else {
           if (jsonResponse["CAPTCHAREQUEST"] == 1) {
             $("#userConfigBody").html(
@@ -126,6 +130,11 @@ let deleteUser = function(username) {
             buttonwanted.find("button").html(`Delete User`);
           }
         }
+        setTimeout(function () {
+          $("#userConfigAlerts").html(
+            ``
+          );
+        }, 2000);
       });
   } catch (err) {
     console.log(`ERROR:  ${err}`);
@@ -135,24 +144,70 @@ let deleteUser = function(username) {
 // Change Password
 
 // Modal Things
-$("#passwordChangeModal").on("show.bs.modal", function() {
+$("#passwordChangeModal").on("show.bs.modal", function () {
   $("#userConfigModal").modal("hide");
 });
 
-$("#passwordChangeForm").submit(function(event) {
-  if ($("#passwordChange").val() == $("#passwordChangeConfirm").val()) {
-    console.log($("#passwordChange").val());
-  } else {
+$("#passwordChangeForm").submit(function (event) {
+
+  event.preventDefault();
+  if (!$("#passwordChange").val()) {
+    $("#passwordChangeAlerts").html(
+      `<div class="alert alert-danger" role="alert"> The password can't be nothing. </div>`
+    );
+  }
+
+  if (!($("#passwordChange").val() == $("#passwordChangeConfirm").val())) {
     $("#passwordChangeAlerts").html(
       `<div class="alert alert-danger" role="alert"> The Passwords do not match. </div>`
     );
+    return;
   }
-  event.preventDefault();
+
+  try {
+    return grecaptcha
+      .execute(CAPTCHASITE, {
+        action: "adminChangePassword"
+      })
+      .then(async function (token) {
+        let response = await fetch("/blog/api/resetPassword", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            // WIP
+            username: username,
+            password: $("#passwordChange").val(),
+            captcha_token: token
+          })
+        });
+        let jsonResponse = await response.json();
+        if (jsonResponse["SUCCESS"] == true) {
+          console.log(`Success`);
+          $(`#post-${elementId}`).remove();
+        } else {
+          if (jsonResponse["CAPTCHAREQUEST"] == 1) {
+            $(`#deleteButton-${elementId}`).prop("disabled", false);
+            $(`#deleteButton-${elementId}`).html(
+              `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span> Failed To Delete!`
+            );
+          } else {
+            $(`#deleteButton-${elementId}`).prop("disabled", false);
+            $(`#deleteButton-${elementId}`).html(
+              `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span> Failed To Delete!`
+            );
+          }
+        }
+      });
+  } catch (err) {
+    console.log(`ERROR:  ${err}`);
+  }
 });
 
 // Configure user things
 
-$("#userConfigModal").on("show.bs.modal", function(event) {
+$("#userConfigModal").on("show.bs.modal", function (event) {
   let button = $(event.relatedTarget);
   let username = button.data("username");
   let dateCreated = button.data("datecreated");
@@ -167,7 +222,7 @@ $("#userConfigModal").on("show.bs.modal", function(event) {
   );
 });
 
-$("#adminCreatePost").on("submit", async function(event) {
+$("#adminCreatePost").on("submit", async function (event) {
   event.preventDefault();
   $("#createPostButton").prop("disabled", true);
   $("#createPostButton").html(
@@ -192,7 +247,7 @@ $("#adminCreatePost").on("submit", async function(event) {
   $("#createPostButton").html(`Submit Post`);
 });
 
-let deletePost = function(title, elementId) {
+let deletePost = function (title, elementId) {
   $(`#deleteButton-${elementId}`).prop("disabled", true);
   $(`#deleteButton-${elementId}`).html(
     `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...`
@@ -202,13 +257,16 @@ let deletePost = function(title, elementId) {
       .execute(CAPTCHASITE, {
         action: "adminRemovePost"
       })
-      .then(async function(token) {
+      .then(async function (token) {
         let response = await fetch("/blog/api/deletePost/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ title: title, captcha_token: token })
+          body: JSON.stringify({
+            title: title,
+            captcha_token: token
+          })
         });
         let jsonResponse = await response.json();
         if (jsonResponse["SUCCESS"] == true) {
@@ -235,7 +293,7 @@ let deletePost = function(title, elementId) {
 
 var currentSecret = "";
 
-let generate2FA = function() {
+let generate2FA = function () {
   $("#Generate2FA").prop("disabled", true);
   $("#Generate2FA").html(
     `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span> Generating 2FA...`
@@ -246,7 +304,7 @@ let generate2FA = function() {
       .execute(CAPTCHASITE, {
         action: "generateCaptcha"
       })
-      .then(async function(token) {
+      .then(async function (token) {
         let response = await fetch("/auth/api/generate2FA/", {
           method: "POST",
           headers: {
@@ -266,7 +324,7 @@ let generate2FA = function() {
               light: "#FFF"
             }
           };
-          QRCode.toDataURL(jsonResponse["URL"], opts, function(err, url) {
+          QRCode.toDataURL(jsonResponse["URL"], opts, function (err, url) {
             if (err) throw err;
             $("#2FAImg").attr("src", url);
           });
@@ -282,7 +340,7 @@ let generate2FA = function() {
   }
 };
 
-let save2FA = function() {
+let save2FA = function () {
   $("#Set2FA").prop("disabled", true);
   $("#Set2FA").html(
     `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="false"></span> Setting 2FA...`
@@ -293,7 +351,7 @@ let save2FA = function() {
       .execute(CAPTCHASITE, {
         action: "setCaptcha"
       })
-      .then(async function(token) {
+      .then(async function (token) {
         if (!$('#2FAVerify').val()) {
           return;
         }
@@ -303,7 +361,11 @@ let save2FA = function() {
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ secret: currentSecret, captcha_token: token, attempt: $('#2FAVerify').val() })
+          body: JSON.stringify({
+            secret: currentSecret,
+            captcha_token: token,
+            attempt: $('#2FAVerify').val()
+          })
         });
         let jsonResponse = await response.json();
         if (jsonResponse["SUCCESS"] == true) {
@@ -311,7 +373,7 @@ let save2FA = function() {
           $("#Set2FA").html(
             `Success!`
           );
-          setTimeout(function() {
+          setTimeout(function () {
             $("#2FAButtonContainer").hide();
           }, 2000);
 
@@ -321,7 +383,7 @@ let save2FA = function() {
             `Failed`
           );
         }
-        setTimeout(function() {
+        setTimeout(function () {
           $('#Set2FA').attr('class', 'btn btn-secondary');
           $("#Set2FA").html(
             `Update 2FA`
@@ -334,7 +396,7 @@ let save2FA = function() {
   }
 };
 
-var switchpage = function(page) {
+var switchpage = function (page) {
   if (page == "Dashboard") {
     $("#DashboardButton").attr("class", "nav-link active");
     $("#UsersButton").attr("class", "nav-link");

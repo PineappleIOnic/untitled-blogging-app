@@ -11,9 +11,11 @@ const speakeasy = require("speakeasy");
 
 var users = null;
 
-let argon2Hash = async function(password) {
+let argon2Hash = async function (password) {
   try {
-    return await argon2.hash(password, { type: argon2.argon2id });
+    return await argon2.hash(password, {
+      type: argon2.argon2id
+    });
   } catch (err) {
     logger.log({
       level: "error",
@@ -22,15 +24,15 @@ let argon2Hash = async function(password) {
   }
 };
 
-setInterval(async function() {
+setInterval(async function () {
   users = await db.any("SELECT * FROM blog.user_data");
 }, 10);
 
-var getAllUsers = function() {
+var getAllUsers = function () {
   return users;
 };
 
-let getUserdata = function(username) {
+let getUserdata = function (username) {
   let wantedData;
   users.forEach(element => {
     if (element["username"] == username) {
@@ -40,11 +42,13 @@ let getUserdata = function(username) {
   if (wantedData) {
     return wantedData;
   } else {
-    return { ERR: "NO_USER_EXIST" };
+    return {
+      ERR: "NO_USER_EXIST"
+    };
   }
 };
 
-var updateUserVar = async function(username, nameofvar, value) {
+var updateUserVar = async function (username, nameofvar, value) {
   let wantedData;
   users.forEach(element => {
     if (element["username"] == username) {
@@ -66,14 +70,18 @@ var updateUserVar = async function(username, nameofvar, value) {
           level: "error",
           message: `[Auth] ${error}`
         });
-        return { ERROR: "An error occoured" };
+        return {
+          ERROR: "An error occoured"
+        };
       });
   } else {
-    return { ERR: "NO_USER_EXIST" };
+    return {
+      ERR: "NO_USER_EXIST"
+    };
   }
 };
 
-var addPPicture = function(username, url) {
+var addPPicture = function (username, url) {
   let wantedData;
   users.forEach(element => {
     if (element["username"] == username) {
@@ -94,12 +102,14 @@ var addPPicture = function(username, url) {
           level: "error",
           message: `[Auth] ${error}`
         });
-        return { ERROR: "An error occoured" };
+        return {
+          ERROR: "An error occoured"
+        };
       });
   }
 };
 
-let pushUser = function(
+let pushUser = function (
   id,
   username,
   password,
@@ -140,44 +150,45 @@ let pushUser = function(
           level: "error",
           message: `[Auth] ${error}`
         });
-        return { ERROR: error };
+        return {
+          ERROR: error
+        };
       });
   }
 };
 
-var removeUser = function(username) {
-  return getUserdata(username).then(user => {
-    if (user["username"]) {
-      return db
-        .none("DELETE FROM blog.user_data WHERE username = $1", [username])
-        .then(() => {
-          return "SUCCESS";
-        })
-        .catch(error => {
-          logger.log({
-            level: "error",
-            message: `[Auth] ${error}`
-          });
+var removeUser = function (username) {
+  let user = getUserdata(username)
+  if (user["username"]) {
+    return db
+      .none("DELETE FROM blog.user_data WHERE username = $1", [username])
+      .then(() => {
+        return "SUCCESS";
+      })
+      .catch(error => {
+        logger.log({
+          level: "error",
+          message: `[Auth] ${error}`
         });
-    } else {
-      return `USER_NO_EXIST`;
-    }
-  });
+      });
+  } else {
+    return `USER_NO_EXIST`;
+  }
 };
 
-var createUser = function(username, password, email, dob) {
-  return argon2Hash(password).then(async function(hash) {
+var createUser = function (username, password, email, dob) {
+  return argon2Hash(password).then(async function (hash) {
     return await pushUser(nanoid(), username, hash, email, dob);
   });
 };
 
-var authenticateUser = function(username, password) {
+var authenticateUser = function (username, password) {
   if (username == "" || username == null) {
     return "invld_usrnme";
   } else {
     return db
       .oneOrNone("SELECT * FROM blog.user_data WHERE username = $1", username)
-      .then(async function(querry) {
+      .then(async function (querry) {
         if (querry) {
           if (await argon2.verify(querry.password, password)) {
             return "AUTH_CORRECT";
@@ -192,7 +203,7 @@ var authenticateUser = function(username, password) {
 };
 
 function resetPassword(username, password) {
-  return argon2Hash(password).then(async function(hash) {
+  return argon2Hash(password).then(async function (hash) {
     let user = getUserdata(username);
     console.log("chad");
     if (!user["ERR"]) {
@@ -222,7 +233,9 @@ function resetPassword(username, password) {
                 level: "error",
                 message: `[Auth] ${error}`
               });
-              return { ERROR: "An error occoured" };
+              return {
+                ERROR: "An error occoured"
+              };
             });
         })
         .catch(error => {
@@ -230,15 +243,19 @@ function resetPassword(username, password) {
             level: "error",
             message: `[Auth] ${error}`
           });
-          return { ERROR: "An error occoured" };
+          return {
+            ERROR: "An error occoured"
+          };
         });
     } else {
-      return { err: user["ERR"] };
+      return {
+        err: user["ERR"]
+      };
     }
   });
 }
 
-var userFromId = function(ID) {
+var userFromId = function (ID) {
   let wantedData;
   users.forEach(element => {
     if (element["id"] == ID) {
@@ -253,20 +270,31 @@ var userFromId = function(ID) {
   if (wantedData) {
     return wantedData;
   } else {
-    return { ERR: "NO_USER_EXIST" };
+    return {
+      ERR: "NO_USER_EXIST"
+    };
   }
 };
 
-var generate2FA = function() {
-  let data = speakeasy.generateSecret({ length: 20 })
-  return ({base32:data.base32, url : speakeasy.otpauthURL({secret:data.base32, label: `IOnic's Blog`, encoding:'base32'})});
+var generate2FA = function () {
+  let data = speakeasy.generateSecret({
+    length: 20
+  })
+  return ({
+    base32: data.base32,
+    url: speakeasy.otpauthURL({
+      secret: data.base32,
+      label: `IOnic's Blog`,
+      encoding: 'base32'
+    })
+  });
 };
 
-var append2FA = async function(user, secret) {
+var append2FA = async function (user, secret) {
   return await updateUserVar(user, "twofactor", secret);
 };
 
-var verify2FA = function(attempt, user, secret) {
+var verify2FA = function (attempt, user, secret) {
   if (user) {
     secret = getUserdata(user)["twofactor"];
   }
