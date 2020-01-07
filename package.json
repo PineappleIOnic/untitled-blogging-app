@@ -34,7 +34,7 @@
     "express-session": "^1.17.0",
     "helmet": "^3.21.2",
     "markdown-it": "^10.0.0",
-    "nanoid": "^2.1.7",
+    "nanoid": "2.1.8",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.0",
     "pg-promise": "^10.2.1",
