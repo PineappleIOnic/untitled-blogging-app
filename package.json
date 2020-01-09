@@ -36,7 +36,6 @@
     "markdown-it": "^10.0.0",
     "nanoid": "^2.1.7",
     "node-fetch": "^2.6.0",
-    "nodemon": "^2.0.0",
     "pg-promise": "^10.2.1",
     "readline-sync": "^1.4.10",
     "redis": "^2.8.0",
