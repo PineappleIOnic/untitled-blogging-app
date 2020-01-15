@@ -1,8 +1,9 @@
-const winston = require("winston");
-const Sentry = require(__dirname + '../../customTransports/sentry.js')
+const winston = require('winston')
+const path = require('path')
+const Sentry = require(path.join(__dirname, '../../customTransports/sentry.js'))
 
 const logger = winston.createLogger({
-  level: "info",
+  level: 'info',
   format: winston.format.json(),
   transports: [
     new winston.transports.Console({
@@ -12,26 +13,26 @@ const logger = winston.createLogger({
       )
     })
   ]
-});
+})
 
 // For production Logging
-if (process.env.NODE_ENV == "production") {
+if (process.env.NODE_ENV === 'production') {
   logger.add(
     new winston.transports.File({
-      filename: "./logs/error.log",
-      level: "error",
+      filename: './logs/error.log',
+      level: 'error',
       handleExceptions: true
     })
-  );
+  )
   if (process.env.SENTRY_ENABLED) {
-    logger.add(new Sentry({level:"error", handleExceptions: true}))
-    logger.add(new Sentry({level:"warn"}))
+    logger.add(new Sentry({ level: 'error', handleExceptions: true }))
+    logger.add(new Sentry({ level: 'warn' }))
     logger.log({
-      level: "warn",
-      message: `[Blog] Server: ${process.env.SERVER_NAME || "Untitled Server"} is now powering up.`
-    });
+      level: 'warn',
+      message: `[Blog] Server: ${process.env.SERVER_NAME || 'Untitled Server'} is now powering up.`
+    })
   }
-  logger.add(new winston.transports.File({ filename: "./logs/combined.log" }));
+  logger.add(new winston.transports.File({ filename: './logs/combined.log' }))
 }
 
-module.exports = logger;
+module.exports = logger

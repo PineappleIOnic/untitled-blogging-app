@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
-const express = require("express")
+const express = require('express')
 // Dotenv to correctly handle .env
-require("dotenv").config()
+require('dotenv').config()
 
-const app = express();
+const app = express()
 
 // Setup logging here
 const logger = require('./connections/logger')
@@ -16,12 +16,11 @@ app.use(helmet())
 const session = require('express-session')
 const crypto = require('crypto')
 
-let RedisStore = require('connect-redis')(session)
+const RedisStore = require('connect-redis')(session)
 
-let redis = require("redis")
+const redis = require('redis')
 
-var redisClient = redis.createClient({url:process.env.REDIS_URL});
-
+var redisClient = redis.createClient({ url: process.env.REDIS_URL })
 
 if (process.env.REDIS_PASS) {
   redisClient.auth(process.env.REDIS_PASS)
@@ -36,25 +35,24 @@ app.use(
   })
 )
 
-redisClient.on("connect", () => {
+redisClient.on('connect', () => {
   logger.log({
-    level:'info',
+    level: 'info',
     message: '[Redis] ' + 'Successfully Connected to Redis Server!'
   })
-});
+})
 
-redisClient.on("error", (err) => {
+redisClient.on('error', (err) => {
   logger.log({
-    level:'error',
+    level: 'error',
     message: '[Redis] ' + err
   })
-});
+})
 
-if (! process.env.SESSION_SECRET) {
+if (!process.env.SESSION_SECRET) {
   console.log('\nSESSION SECRET NOT DEFINED IN ENVRIOMENT VARIABLES.')
   console.log('Using random generated ones, this is bad since sessions wil not be kept over restarts. \n')
 }
-
 
 // Used to fake the PoweredBy Header, Just here for a proof of concept (Can Deter Hackers from exploiting node.js or express vulerbilties)
 app.use(helmet.hidePoweredBy({ setTo: 'PHP 4.2.0' }))
@@ -71,10 +69,10 @@ app.use(APISecure.crawlDetect)
 // Used for getting IP for anti-DDOS
 app.set('trust proxy', true)
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080
 
 logger.log({
-  level:'info',
+  level: 'info',
   message: `Mode is: ${process.env.NODE_ENV}`
 })
 
@@ -87,7 +85,7 @@ const blogRouter = require('./routers/blog_router.js')
 
 app.use('/', indexRouter)
 
-app.use('/cdn' , express.static('static'))
+app.use('/cdn', express.static('static'))
 
 app.use('/auth', loginRouter)
 
@@ -97,12 +95,11 @@ app.use('/blog', blogRouter)
 
 app.use('*', errorRouter)
 
-
 // Finally Start app.listen
 
 app.listen(port, () => {
-    logger.log({
-      level: 'info',
-      message: `Server Started @ http://127.0.0.1:${port}`
-    });
-});
+  logger.log({
+    level: 'info',
+    message: `Server Started @ http://127.0.0.1:${port}`
+  })
+})

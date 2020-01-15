@@ -1,186 +1,188 @@
 // APISecure is the middleware that is used to secure the various api's for untitled-blogging-app.
 
 // Load Required modules:
-const fs = require("fs");
-const logger = require(__dirname + "/../../src/connections/logger.js");
-require("colors");
+const fs = require('fs')
+const path = require('path')
+const logger = require(path.join(__dirname, '/../../src/connections/logger.js'))
+require('colors')
 
-var useragent = require('useragent');
+var useragent = require('useragent')
 
-var requests = [];
-var beingAttacked = false;
+var requests = []
+var beingAttacked = false
 
-var botAgentList = ["Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou"];
+var botAgentList = ['Googlebot', 'Bingbot', 'Slurp', 'DuckDuckBot', 'Baiduspider', 'YandexBot', 'Sogou']
 
 // APISecure's Config Loader:
-let config = JSON.parse(
-  fs.readFileSync(__dirname + "/../../src/config/APISecure.json")
-);
+const config = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '/../../src/config/APISecure.json'))
+)
 
 // Sleep function for timeout
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function sleep (ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 // Add one then wait x ammount of time until you remove it. Used for ratelimiter to keep track of how many requests are made in an time frame.
 
-var addRequest = async function(path, req) {
-  let IP = req.ip;
-  if (IP.substr(0, 7) == "::ffff:") {
-    IP = IP.substr(7);
+var addRequest = async function (path, req) {
+  let IP = req.ip
+  if (IP.substr(0, 7) === '::ffff:') {
+    IP = IP.substr(7)
   }
-  let rules = config.ratelimiter["rules"];
+  const rules = config.ratelimiter.rules
   if (!requests[IP]) {
-    requests[IP] = [];
+    requests[IP] = []
   }
   if (!requests[IP][path]) {
-    requests[IP][path] = 0;
+    requests[IP][path] = 0
   }
   if (rules[path]) {
-    requests[IP][path]++;
+    requests[IP][path]++
     sleep(rules[path].decayTime).then(() => {
-      requests[IP][path]--;
-    });
+      requests[IP][path]--
+    })
   } else {
-    requests[IP][path]++;
-    sleep(rules["default"].decayTime).then(() => {
-      requests[IP][path]--;
-    });
+    requests[IP][path]++
+    sleep(rules.default.decayTime).then(() => {
+      requests[IP][path]--
+    })
   }
-};
+}
 
-function isOverLimit(path, req) {
-  let rules = config.ratelimiter["rules"];
-  let IP = req.ip;
-  if (IP.substr(0, 7) == "::ffff:") {
-    IP = IP.substr(7);
+function isOverLimit (path, req) {
+  const rules = config.ratelimiter.rules
+  let IP = req.ip
+  if (IP.substr(0, 7) === '::ffff:') {
+    IP = IP.substr(7)
   }
-  let totalRequests = requests[IP] || 1;
+  const totalRequests = requests[IP] || 1
   if (rules[path]) {
     if (totalRequests[path] > rules[path].concurrentRequests) {
-      if (beingAttacked == false) {
-        beingAttacked = true;
+      if (beingAttacked === false) {
+        beingAttacked = true
         logger.log({
-          level: "error",
+          level: 'error',
           message: `[APISecure] rate limit exceeded by ${IP}! This could be an DDOS Attack or APISecure.json isn't configured correctly.`
-        });
+        })
       }
-      return true;
+      return true
     } else {
-      if (beingAttacked == true) {
-        beingAttacked = false;
+      if (beingAttacked === true) {
+        beingAttacked = false
         logger.log({
-          level: "warn",
-          message: `[APISecure] rate limit had returned to normal.`
-        });
+          level: 'warn',
+          message: '[APISecure] rate limit had returned to normal.'
+        })
       }
-      return false;
+      return false
     }
   } else {
-    if (totalRequests[path] > rules["default"].concurrentRequests) {
-      if (beingAttacked == false) {
-        beingAttacked = true;
+    if (totalRequests[path] > rules.default.concurrentRequests) {
+      if (beingAttacked === false) {
+        beingAttacked = true
         logger.log({
-          level: "error",
+          level: 'error',
           message: `[APISecure] rate limit exceeded by ${IP}! This could be an DDOS Attack or APISecure.json isn't configured correctly.`
-        });
+        })
       }
-      return true;
+      return true
     } else {
-      if (beingAttacked == true) {
-        beingAttacked = false;
+      if (beingAttacked === true) {
+        beingAttacked = false
         logger.log({
-          level: "warn",
-          message: `[APISecure] rate limit had returned to normal.`
-        });
+          level: 'warn',
+          message: '[APISecure] rate limit had returned to normal.'
+        })
       }
-      return false;
+      return false
     }
   }
 }
 
 // Request Logger
-var requestLogger = function(req, res, next) {
-  var end = res.end;
+var requestLogger = function (req, res, next) {
+  var end = res.end
 
-  let thisURL = (req.baseUrl + req.path).replace(/\/$/, "");
+  const thisURL = (req.baseUrl + req.path).replace(/\/$/, '')
 
-  res.end = function(chunk, encoding) {
-    let statusCode = res.statusCode;
-    let statusCode_Color = null;
-    if (statusCode == 404) {
-      statusCode_Color = "404".red;
-    } else if (statusCode == 304 || statusCode == 200) {
-      statusCode_Color = `${statusCode}`.green;
+  res.end = function (chunk, encoding) {
+    const statusCode = res.statusCode
+    let statusColor = null
+    if (statusCode === 404) {
+      statusColor = '404'.red
+    } else if (statusCode === 304 || statusCode === 200) {
+      statusColor = `${statusCode}`.green
     } else {
-      statusCode_Color = `${statusCode}`.red;
+      statusColor = `${statusCode}`.red
     }
-    let IP = req.ip;
-    if (IP.substr(0, 7) == "::ffff:") {
-      IP = IP.substr(7);
+    let IP = req.ip
+    if (IP.substr(0, 7) === '::ffff:') {
+      IP = IP.substr(7)
     }
     logger.log({
-      level: "info",
-      message: `[Blog] Request: ${req.get("host") +
-        thisURL} Status: ${statusCode_Color} IP: ${IP}`
-    });
+      level: 'info',
+      message: `[Blog] Request: ${req.get('host') +
+        thisURL} Status: ${statusColor} IP: ${IP}`
+    })
 
-    res.end = end;
-    res.end(chunk, encoding);
-  };
-  next();
-};
+    res.end = end
+    res.end(chunk, encoding)
+  }
+  next()
+}
 
 // Ratelimiter
 // Ratelimiting can be done on an per basis via the ratelimit.json
-var ratelimit = function(req, res, next) {
-  let thisURL = req.path;
-  addRequest(thisURL, req);
+var ratelimit = function (req, res, next) {
+  const thisURL = req.path
+  addRequest(thisURL, req)
   if (isOverLimit(thisURL, req)) {
-    res.statusCode = 429;
-    res.send("429: Too many requests");
+    res.statusCode = 429
+    res.send('429: Too many requests')
   } else {
-    next();
+    next()
   }
-};
+}
 
 // Blacklist, used for blacklisting repeat offenders :) Uses rules set within APISecure.json
-var blacklist = function(req, res, next) {
-  let IP = req.ip;
-  if (IP.substr(0, 7) == "::ffff:") {
-    IP = IP.substr(7);
+var blacklist = function (req, res, next) {
+  let IP = req.ip
+  if (IP.substr(0, 7) === '::ffff:') {
+    IP = IP.substr(7)
   }
   if (config.blacklist.includes(IP)) {
-    res.statusCode = 403.6;
-    res.send("403.6: IP Blacklisted");
+    res.statusCode = 403.6
+    res.send('403.6: IP Blacklisted')
   } else {
-    next();
+    next()
   }
-};
+}
 
 // Force-HTTPS
 // Only Enable for Heroku!
 
-var forceHTTPS = function(req, res, next) {
-  if (config.forceHTTPS["enabled"] == true) {
-    if (req.headers["x-forwarded-proto"] !== "https") {
-      return res.redirect(["https://", req.get("Host"), req.url].join(""));
+var forceHTTPS = function (req, res, next) {
+  if (config.forceHTTPS.enabled === true) {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(['https://', req.get('Host'), req.url].join(''))
     }
-    return next();
+    return next()
   } else {
-    return next();
+    return next()
   }
-};
-
-// Crawlbot Detector
-var crawlDetect = function(req, res, next) {
-  let agent = useragent.parse(req.headers['user-agent'])
-  if(botAgentList.includes(agent.family)) {
-    logger.log({
-      level: "warn",
-      message: `Bot just crawled site! Bot-agent: ${req.headers['user-agent']}, Family: ${agent.family}, Page: ${req.path}`});
-  }
-  next();
 }
 
-module.exports = { ratelimit, requestLogger, blacklist, forceHTTPS , crawlDetect};
+// Crawlbot Detector
+var crawlDetect = function (req, res, next) {
+  const agent = useragent.parse(req.headers['user-agent'])
+  if (botAgentList.includes(agent.family)) {
+    logger.log({
+      level: 'warn',
+      message: `Bot just crawled site! Bot-agent: ${req.headers['user-agent']}, Family: ${agent.family}, Page: ${req.path}`
+    })
+  }
+  next()
+}
+
+module.exports = { ratelimit, requestLogger, blacklist, forceHTTPS, crawlDetect }

@@ -3,113 +3,114 @@
 // Auth.JS Revision 1.7
 // Written by IOnicisere, under the MIT Licence.
 
-const db = require(__dirname + "/DB.js").db;
-const logger = require(__dirname + "/logger.js");
-const argon2 = require("argon2");
-const nanoid = require("nanoid");
-const speakeasy = require("speakeasy");
+const path = require('path')
+const db = require(path.join(__dirname, '/DB.js')).db
+const logger = require(path.join(__dirname, '/logger.js'))
+const argon2 = require('argon2')
+const nanoid = require('nanoid')
+const speakeasy = require('speakeasy')
 
-var users = null;
+var users = null
 
-let argon2Hash = async function (password) {
+const argon2Hash = async function (password) {
   try {
     return await argon2.hash(password, {
       type: argon2.argon2id
-    });
+    })
   } catch (err) {
     logger.log({
-      level: "error",
+      level: 'error',
       message: `[Argon2] ${err} `
-    });
+    })
   }
-};
+}
 
 setInterval(async function () {
-  users = await db.any("SELECT * FROM blog.user_data");
-}, 10);
+  users = await db.any('SELECT * FROM blog.user_data')
+}, 10)
 
 var getAllUsers = function () {
-  return users;
-};
+  return users
+}
 
-let getUserdata = function (username) {
-  let wantedData;
+const getUserdata = function (username) {
+  let wantedData
   users.forEach(element => {
-    if (element["username"] == username) {
-      wantedData = element;
+    if (element.username === username) {
+      wantedData = element
     }
-  });
+  })
   if (wantedData) {
-    return wantedData;
+    return wantedData
   } else {
     return {
-      ERR: "NO_USER_EXIST"
-    };
+      ERR: 'NO_USER_EXIST'
+    }
   }
-};
+}
 
 var updateUserVar = async function (username, nameofvar, value) {
-  let wantedData;
+  let wantedData
   users.forEach(element => {
-    if (element["username"] == username) {
-      wantedData = element;
+    if (element.username === username) {
+      wantedData = element
     }
-  });
+  })
   if (wantedData) {
-    wantedData[nameofvar] = value;
+    wantedData[nameofvar] = value
     return db // This is such an bad thing to do, ngl. if updateuservar get's hijacked we're fucked.
       .none(
         `UPDATE blog.user_data SET ${nameofvar} = $2 WHERE username = $1;`,
         [username, value]
       )
       .then(() => {
-        return "SUCCESS";
+        return 'SUCCESS'
       })
       .catch(error => {
         logger.log({
-          level: "error",
+          level: 'error',
           message: `[Auth] ${error}`
-        });
+        })
         return {
-          ERROR: "An error occoured"
-        };
-      });
+          ERROR: 'An error occoured'
+        }
+      })
   } else {
     return {
-      ERR: "NO_USER_EXIST"
-    };
+      ERR: 'NO_USER_EXIST'
+    }
   }
-};
+}
 
 var addPPicture = function (username, url) {
-  let wantedData;
+  let wantedData
   users.forEach(element => {
-    if (element["username"] == username) {
-      wantedData = element;
+    if (element.username === username) {
+      wantedData = element
     }
-  });
+  })
   if (wantedData) {
     return db
       .none(
-        "UPDATE blog.user_data SET (username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8)",
+        'UPDATE blog.user_data SET (username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8)',
         [url]
       )
       .then(() => {
-        return "SUCCESS";
+        return 'SUCCESS'
       })
       .catch(error => {
         logger.log({
-          level: "error",
+          level: 'error',
           message: `[Auth] ${error}`
-        });
+        })
         return {
-          ERROR: "An error occoured"
-        };
-      });
+          ERROR: 'An error occoured'
+        }
+      })
   }
-};
+}
 
-let pushUser = function (
+const pushUser = function (
   id,
   username,
   password,
@@ -120,16 +121,16 @@ let pushUser = function (
   coverpicture
 ) {
   // Test if DB has already got an user with this username.
-  let user = getUserdata(username);
-  if (!user["ERR"]) {
-    return "User Exists!";
-  } else if (user["ERR"] == "NO_USER_EXIST") {
-    let currentDate = new Date();
-    let formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() +
-      1}/${currentDate.getFullYear()}`;
+  const user = getUserdata(username)
+  if (!user.ERR) {
+    return 'User Exists!'
+  } else if (user.ERR === 'NO_USER_EXIST') {
+    const currentDate = new Date()
+    const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() +
+      1}/${currentDate.getFullYear()}`
     return db
       .none(
-        "INSERT INTO blog.user_data(id, username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+        'INSERT INTO blog.user_data(id, username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)',
         [
           id,
           username,
@@ -143,76 +144,76 @@ let pushUser = function (
         ]
       )
       .then(() => {
-        return "SUCCESS";
+        return 'SUCCESS'
       })
       .catch(error => {
         logger.log({
-          level: "error",
+          level: 'error',
           message: `[Auth] ${error}`
-        });
+        })
         return {
           ERROR: error
-        };
-      });
+        }
+      })
   }
-};
+}
 
 var removeUser = function (username) {
-  let user = getUserdata(username)
-  if (user["username"]) {
+  const user = getUserdata(username)
+  if (user.username) {
     return db
-      .none("DELETE FROM blog.user_data WHERE username = $1", [username])
+      .none('DELETE FROM blog.user_data WHERE username = $1', [username])
       .then(() => {
-        return "SUCCESS";
+        return 'SUCCESS'
       })
       .catch(error => {
         logger.log({
-          level: "error",
+          level: 'error',
           message: `[Auth] ${error}`
-        });
-      });
+        })
+      })
   } else {
-    return `USER_NO_EXIST`;
+    return 'USER_NO_EXIST'
   }
-};
+}
 
 var createUser = function (username, password, email, dob) {
   return argon2Hash(password).then(async function (hash) {
-    return await pushUser(nanoid(), username, hash, email, dob);
-  });
-};
+    return pushUser(nanoid(), username, hash, email, dob)
+  })
+}
 
 var authenticateUser = function (username, password) {
-  if (username == "" || username == null) {
-    return "invld_usrnme";
+  if (username === '' || username === null) {
+    return 'invld_usrnme'
   } else {
     return db
-      .oneOrNone("SELECT * FROM blog.user_data WHERE username = $1", username)
+      .oneOrNone('SELECT * FROM blog.user_data WHERE username = $1', username)
       .then(async function (querry) {
         if (querry) {
           if (await argon2.verify(querry.password, password)) {
-            return "AUTH_CORRECT";
+            return 'AUTH_CORRECT'
           } else {
-            return "AUTH_INCORRECT";
+            return 'AUTH_INCORRECT'
           }
         } else {
-          return "USR_NOT_FOUND";
+          return 'USR_NOT_FOUND'
         }
-      });
+      })
   }
-};
+}
 
-function resetPassword(username, password) {
+function resetPassword (username, password) {
   return argon2Hash(password).then(async function (hash) {
-    let user = getUserdata(username);
-    console.log("chad");
-    if (!user["ERR"]) {
+    const user = getUserdata(username)
+    console.log('chad')
+    if (!user.ERR) {
       return db
-        .none("DELETE FROM blog.user_data WHERE username = $1", [username])
+        .none('DELETE FROM blog.user_data WHERE username = $1', [username])
         .then(() => {
           return db
             .none(
-              "INSERT INTO blog.user_data(id, username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+              'INSERT INTO blog.user_data(id, username, password, date_created, email, dob, twofactor, profilepicture, coverpicture) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)',
               [
                 user.id,
                 user.username,
@@ -226,85 +227,85 @@ function resetPassword(username, password) {
               ]
             )
             .then(() => {
-              return "SUCCESS";
+              return 'SUCCESS'
             })
             .catch(error => {
               logger.log({
-                level: "error",
+                level: 'error',
                 message: `[Auth] ${error}`
-              });
+              })
               return {
-                ERROR: "An error occoured"
-              };
-            });
+                ERROR: 'An error occoured'
+              }
+            })
         })
         .catch(error => {
           logger.log({
-            level: "error",
+            level: 'error',
             message: `[Auth] ${error}`
-          });
+          })
           return {
-            ERROR: "An error occoured"
-          };
-        });
+            ERROR: 'An error occoured'
+          }
+        })
     } else {
       return {
-        err: user["ERR"]
-      };
+        err: user.ERR
+      }
     }
-  });
+  })
 }
 
 var userFromId = function (ID) {
-  let wantedData;
+  let wantedData
   users.forEach(element => {
-    if (element["id"] == ID) {
+    if (element.id === ID) {
       wantedData = {
-        username: element["username"],
-        "Date Created": element["date_created"],
-        "Profile Picture": element["profilepicture"],
-        "Cover Picture": element["coverpicture"]
-      };
+        username: element.username,
+        'Date Created': element.date_created,
+        'Profile Picture': element.profilepicture,
+        'Cover Picture': element.coverpicture
+      }
     }
-  });
+  })
   if (wantedData) {
-    return wantedData;
+    return wantedData
   } else {
     return {
-      ERR: "NO_USER_EXIST"
-    };
+      ERR: 'NO_USER_EXIST'
+    }
   }
-};
+}
 
 var generate2FA = function () {
-  let data = speakeasy.generateSecret({
+  const data = speakeasy.generateSecret({
     length: 20
   })
   return ({
     base32: data.base32,
     url: speakeasy.otpauthURL({
       secret: data.base32,
-      label: `IOnic's Blog`,
+      label: 'IOnic\'s Blog',
       encoding: 'base32'
     })
-  });
-};
+  })
+}
 
 var append2FA = async function (user, secret) {
-  return await updateUserVar(user, "twofactor", secret);
-};
+  return updateUserVar(user, 'twofactor', secret)
+}
 
 var verify2FA = function (attempt, user, secret) {
   if (user) {
-    secret = getUserdata(user)["twofactor"];
+    secret = getUserdata(user).twofactor
   }
   return speakeasy.totp.verify({
     secret: secret,
-    encoding: "base32",
+    encoding: 'base32',
     token: attempt,
     window: 10
-  });
-};
+  })
+}
 
 module.exports = {
   authenticateUser,
@@ -319,4 +320,4 @@ module.exports = {
   generate2FA,
   append2FA,
   verify2FA
-};
+}
