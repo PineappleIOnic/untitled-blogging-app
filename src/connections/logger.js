@@ -1,6 +1,6 @@
 const winston = require('winston')
 const path = require('path')
-const Sentry = require(path.join(__dirname, '../../customTransports/sentry.js'))
+const Sentry = require(path.join(__dirname, '../customTransports/sentry.js'))
 
 const logger = winston.createLogger({
   level: 'info',
