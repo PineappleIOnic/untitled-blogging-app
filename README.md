@@ -4,6 +4,7 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Greenkeeper badge](https://badges.greenkeeper.io/PineappleIOnic/untitled-blogging-app.svg)](https://greenkeeper.io/)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/027f3997d8dc4fd4a8d35dd1bc5583ca)](https://www.codacy.com/manual/PineappleIOnic/untitled-blogging-app?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PineappleIOnic/untitled-blogging-app&amp;utm_campaign=Badge_Grade)
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H41RDP3)
 
 ## About
 I was bored one day, and needed to up my database and authentication skills, so I decided to make an simple blogging app, but didn't know what to call it hence the name "untitled blogging app", This uses postgreSQL as an database and redis as an caching server (Mainly used for sessions).
