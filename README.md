@@ -4,6 +4,7 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Greenkeeper badge](https://badges.greenkeeper.io/PineappleIOnic/untitled-blogging-app.svg)](https://greenkeeper.io/)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/027f3997d8dc4fd4a8d35dd1bc5583ca)](https://www.codacy.com/manual/PineappleIOnic/untitled-blogging-app?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PineappleIOnic/untitled-blogging-app&amp;utm_campaign=Badge_Grade)
+
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H41RDP3)
 
 ## About
