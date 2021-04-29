@@ -40,7 +40,7 @@
     "node-fetch": "^2.6.1",
     "pg-promise": "^10.7.1",
     "readline-sync": "^1.4.10",
-    "redis": "^3.0.2",
+    "redis": "^3.1.1",
     "snyk": "^1.348.1",
     "speakeasy": "^2.0.0",
     "useragent": "^2.3.0",
